@@ -1,0 +1,34 @@
+A very basic project template for Verilog simulation and synthesis using Isim
+and Xilinx tools. Adapted from an actual project, so there is likely a bit of
+unecessary flags and switches on certain commands. I have done my best to remove
+everything a can where things will still build.
+
+Build a bitstream (to upload to an FPGA, preconfigured as Spartan 6 chip in one
+of the conf files) via:
+
+.synth_project/make.sh
+
+the toplevel ucf (constraints mapping netlist objects from the verilog
+compilation to hardware resources, and place and routing and timing constraints)
+is:
+./synth_project/project.ucf
+
+the toplevel verilog module, which does nothing (just sets some pins to zero)
+lives in:
+./hdl/project.v
+
+
+Simulate with isim via:
+
+./testbench/fuse.sh
+./testbench/simulate_isim -gui
+
+
+In isim, you can open the "signals.wcfg" in the file menu to reload a the logic
+analyzer configuration. This cfg file will not be valid if you delete any
+signals from your design that are saves in the wcfg.
+
+./testbench/tb.v  is the toplevel testbench file for simulation.
+
+
+Please improve and push!
