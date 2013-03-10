@@ -6,7 +6,7 @@ everything a can where things will still build.
 Build a bitstream (to upload to an FPGA, preconfigured as Spartan 6 chip in one
 of the conf files) via:
 
-.synth_project/make.sh
+./synth_project/make.sh
 
 the toplevel ucf (constraints mapping netlist objects from the verilog
 compilation to hardware resources, and place and routing and timing constraints)
