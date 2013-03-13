@@ -42,7 +42,7 @@ isim.wdb
 *.xmsgs
 fuseRelaunch.cmd
 isim.wdb
-isim/
+tb/isim/
 dump.vcd
 simulation/
 *_envsettings.html

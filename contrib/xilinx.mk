@@ -1,8 +1,10 @@
-# This file came from excamera's build example.
+# This file oritinally came from excamera's build example.
 #
 # The top level module should define the variables below then include
 # this file.  The files listed should be in the same directory as the
 # Makefile.  
+#
+# TODO: update these listings
 #
 #   variable	description
 #   ----------  -------------
@@ -53,7 +55,7 @@ local_corengcs = $(foreach ngc,$(corengcs),$(notdir $(ngc)))
 vfiles += $(foreach core,$(xilinx_cores),$(core:.xco=.v))
 junk += $(local_corengcs)
 
-.PHONY: default xilinx_cores clean twr etwr ise isim
+.PHONY: default xilinx_cores clean twr etwr ise
 default: build/$(project).bit build/$(project).mcs
 xilinx_cores: $(corengcs)
 twr: $(project).twr
@@ -151,14 +153,15 @@ junk += $(project).prj
 
 optfile += $(wildcard $(project).opt)
 top_module ?= $(project)
-build/$(project).scr: $(optfile) $(mkfiles) ./contrib/xilinx.opt
+build/$(project).scr: $(optfile) $(mkfiles) ./$(project).opt
 	mkdir -p build
 	echo "run" > $@
 	echo "-p $(part)" >> $@
 	echo "-top $(top_module)" >> $@
 	echo "-ifn $(project).prj" >> $@
 	echo "-ofn $(project).ngc" >> $@
-	cat ./contrib/xilinx.opt $(optfile) >> $@
+	cat $(optfile) >> $@
+	cp $@ build/$(project).xst
 junk += $(project).scr
 
 build/$(project).post_map.twr: build/$(project).ncd
@@ -176,6 +179,14 @@ junk += $(project)_err.twr $(project)_err.twx
 .gitignore: $(mkfiles)
 	echo programming_files $(junk) | sed 's, ,\n,g' > .gitignore
 
+ise:
+	@echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+	@echo "! WARNING: you might need to update ISE's project settings !"
+	@echo "!          (see README)                                    !"
+	@echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+	@mkdir -p build
+	bash -c "$(xil_env); ise .. &"
+
 clean::
-	rm -rf $(junk)
-	cd build; rm -rf $(junk)
+	rm -rf build
+#rm -rf $(junk)
