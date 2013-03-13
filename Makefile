@@ -6,8 +6,11 @@ vendor = xilinx
 family = spartan6
 part = xc6slx45t-3-fgg484
 
-iseenvfile = /opt/Xilinx/14.3/ISE_DS/settings64.sh
+# is this build host 64 or 32 bits?
+hostbits = 64
+iseenv= /opt/Xilinx/14.3/ISE_DS/
 
 vfiles = ./hdl/project.v
+tbfiles = ./tb/tb.v
 
 include ./contrib/xilinx.mk

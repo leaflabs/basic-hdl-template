@@ -42,8 +42,11 @@
 coregen_work_dir ?= ./coregen-tmp
 map_opts ?= -timing -ol high -detail -pr b -register_duplication -w
 par_opts ?= -ol high
-iseenvfile?= /opt/Xilinx/14.3/ISE_DS
+hostbits = 64
+iseenv= /opt/Xilinx/14.3/ISE_DS
+iseenvfile?= $(iseenv)/settings$(hostbits).sh
 xil_env ?= cd ./build; source $(iseenvfile) > /dev/null
+sim_env ?= cd ./tb; source $(iseenvfile) > /dev/null
 flashsize ?= 8192
 
 libmks = $(patsubst %,$(libdir)/%/module.mk,$(libs)) 
@@ -179,6 +182,32 @@ junk += $(project)_err.twr $(project)_err.twx
 .gitignore: $(mkfiles)
 	echo programming_files $(junk) | sed 's, ,\n,g' > .gitignore
 
+tb/simulate_isim.prj: $(tbfiles)
+	rm $@
+	for f in $(vfiles)
+	do
+		echo "verilog unenclib ../$(f)" >> $@
+	done
+	for f in $(tbfiles)
+	do
+		echo "verilog unenclib ../$(f)" >> $@
+	done
+	echo "verilog unenclib ../$(iseenv)/ISE/verilog/src/glbl.v" >> $@
+
+tb/isim: tb/simulate_isim.prj
+	bash -c "$(sim_env); cd ../tb/; vlogcomp -prj simulate_isim.prj"
+
+tb/simulate_isim: tb/isim
+	bash -c "$(sim_env); cd ../tb/; fuse -lib unisims_ver -lib secureip -lib xilinxcorelib_ver -lib unimacro_ver -lib iplib=./iplib -lib unenclib -o simulate_isim unenclib.tb unenclib.glbl"
+
+simulate: tb/simulate_isim
+
+isim_gui: simulate
+	bash -c "$(sim_env); cd ../tb/; ./simulate_isim"
+
+isim_gui: simulate
+	bash -c "$(sim_env); cd ../tb/; ./simulate_isim -gui -view signals.wcfg"
+
 ise:
 	@echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
 	@echo "! WARNING: you might need to update ISE's project settings !"
@@ -187,6 +216,13 @@ ise:
 	@mkdir -p build
 	bash -c "$(xil_env); ise .. &"
 
-clean::
+clean: clean_synth clean_sim
+
+clean_sim::
+	rm -f tb/simulate_isim tb/*.log tb/*.cmd tb/*.xmsgs
+	rm -rf tb/isim
+
+clean_synth::
 	rm -rf build
 #rm -rf $(junk)
+
