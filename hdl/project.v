@@ -1,4 +1,4 @@
-module project
+module main
    (
     output wire LED_output_0,
     output wire LED_output_1,

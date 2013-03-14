@@ -1,5 +1,5 @@
 project = project
-top_module = project
+top_module = main
 vendor = xilinx
 
 # This is the chipset from the Xilinx SP605 dev board
