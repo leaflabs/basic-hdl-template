@@ -221,7 +221,7 @@ ise:
 	@echo "!          (see README)                                    !"
 	@echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
 	@mkdir -p build
-	bash -c "$(xil_env); ise .. &"
+	bash -c "$(xil_env); cd ..; ise $(project).xise &"
 
 clean: clean_synth clean_sim
 
