@@ -45,7 +45,7 @@ par_opts ?= -ol high
 hostbits = 64
 iseenv= /opt/Xilinx/14.3/ISE_DS
 iseenvfile?= $(iseenv)/settings$(hostbits).sh
-xil_env ?= cd ./build; source $(iseenvfile) > /dev/null
+xil_env ?= mkdir -p build/; cd ./build; source $(iseenvfile) > /dev/null
 sim_env ?= cd ./tb; source $(iseenvfile) > /dev/null
 flashsize ?= 8192
 
@@ -70,25 +70,32 @@ $(2): $(1)
 endef
 $(foreach ngc,$(corengcs),$(eval $(call cp_template,$(ngc),$(notdir $(ngc)))))
 
-%.ngc %.v: %.xco
-	@echo "=== rebuilding $@"
+$(coregen_work_dir)/$(project).cgp: contrib/template.cgp Makefile
 	if [ -d $(coregen_work_dir) ]; then \
 		rm -rf $(coregen_work_dir)/*; \
 	else \
 		mkdir -p $(coregen_work_dir); \
 	fi
-	cd $(coregen_work_dir); \
-	bash -c "$(xil_env); \
-	coregen -b $$OLDPWD/$<; \
-	cd -
+	cp contrib/template.cgp $@
+	echo "SET designentry = Verilog " >> $@
+	echo "SET device = $(device)" >> $@
+	echo "SET devicefamily = $(family)" >> $@
+	echo "SET package = $(device_package)" >> $@
+	echo "SET speedgrade = $(speedgrade)" >> $@
+	echo "SET workingdirectory = ./tmp/" >> $@
+
+%.ngc %.v: %.xco $(coregen_work_dir)/$(project).cgp
+	@echo "=== rebuilding $@"
+	bash -c "$(xil_env); cd ../$(coregen_work_dir); coregen -b $$OLDPWD/../$< -p $(project).cgp;"
 	xcodir=`dirname $<`; \
 	basename=`basename $< .xco`; \
-	if [ ! -r $(coregen_work_dir/$$basename.ngc) ]; then \
+	echo $(coregen_work_dir)/$$basename.v; \
+	if [ ! -r $(coregen_work_dir)/$$basename.ngc ]; then \
 		echo "'$@' wasn't created."; \
 		exit 1; \
 	else \
 		cp $(coregen_work_dir)/$$basename.v $(coregen_work_dir)/$$basename.ngc $$xcodir; \
-	fi"
+	fi
 junk += $(coregen_work_dir)
 
 date = $(shell date +%F-%H-%M)
@@ -140,7 +147,7 @@ junk += $(project)_summary.xml $(project)_usage.xml
 
 build/$(project).ngd: build/$(project).ngc $(project).ucf $(project).bmm
 	bash -c "$(xil_env); \
-	ngdbuild $(intstyle) $(project).ngc -bm ../$(project).bmm"
+	ngdbuild $(intstyle) $(project).ngc -bm ../$(project).bmm -sd ../cores"
 junk += $(project).ngd $(project).bld
 
 build/$(project).ngc: $(vfiles) $(local_corengcs) build/$(project).scr build/$(project).prj
@@ -202,10 +209,10 @@ tb/simulate_isim: tb/isim
 
 simulate: tb/simulate_isim
 
-isim_gui: simulate
+isim_cli: simulate
 	bash -c "$(sim_env); cd ../tb/; ./simulate_isim"
 
-isim_gui: simulate
+isim: simulate
 	bash -c "$(sim_env); cd ../tb/; ./simulate_isim -gui -view signals.wcfg"
 
 ise:
@@ -224,5 +231,6 @@ clean_sim::
 
 clean_synth::
 	rm -rf build
+	rm -rf coregen-tmp
 #rm -rf $(junk)
 

@@ -17,6 +17,8 @@ lives in:
 
     ./hdl/project.v
 
+Add other verilog synthesis (not testbench) files to ./hdl/*.v
+
 To edit the project with the ISE GUI, try:
 
     make ise
@@ -29,9 +31,9 @@ Simulate with isim via:
 
     make simulate
 
-View the results using isim with:
+View the results using the isim GUI with:
 
-    make isim_gui
+    make isim
 
 In isim, you can open the "signals.wcfg" in the file menu to reload a the logic
 analyzer configuration. This cfg file will not be valid if you delete any
