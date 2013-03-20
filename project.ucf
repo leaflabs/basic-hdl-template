@@ -1,6 +1,6 @@
 NET "PUSH_BUTTON_RESET_RAW" LOC = F3;
 
-#100MHz clock
+#200MHz clock
 NET "SYSTEMCLOCK" LOC = K21;
 
 NET "Switch_input_0" LOC = C18;
@@ -12,10 +12,4 @@ NET "LED_output_1" LOC = D17;
 NET "LED_output_2" LOC = AB4;
 NET "LED_output_4" LOC = D21;
 NET "LED_output_5" LOC = W15;
-
-# Defines the external differential clock to be 150 MHz with 50% duty
-# cycle.
-
-NET "SYSTEMCLOCK" TNM_NET = "SYSTEMCLOCK";
-TIMESPEC TS__SYSTEMCLOCK = PERIOD "SYSTEMCLOCK" 5 ns HIGH 50 % PRIORITY 2;
 
