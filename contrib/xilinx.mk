@@ -190,16 +190,14 @@ junk += $(project)_err.twr $(project)_err.twx
 	echo programming_files $(junk) | sed 's, ,\n,g' > .gitignore
 
 tb/simulate_isim.prj: $(tbfiles)
-	rm $@
-	for f in $(vfiles)
-	do
-		echo "verilog unenclib ../$(f)" >> $@
+	rm -f $@
+	for f in $(vfiles); do \
+		echo "verilog unenclib ../$$f" >> $@; \
 	done
-	for f in $(tbfiles)
-	do
-		echo "verilog unenclib ../$(f)" >> $@
+	for f in $(tbfiles); do \
+		echo "verilog unenclib ../$$f" >> $@; \
 	done
-	echo "verilog unenclib ../$(iseenv)/ISE/verilog/src/glbl.v" >> $@
+	echo "verilog unenclib $(iseenv)/ISE/verilog/src/glbl.v" >> $@
 
 tb/isim: tb/simulate_isim.prj
 	bash -c "$(sim_env); cd ../tb/; vlogcomp -prj simulate_isim.prj"
