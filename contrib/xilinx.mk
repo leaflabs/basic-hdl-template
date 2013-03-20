@@ -189,7 +189,7 @@ junk += $(project)_err.twr $(project)_err.twx
 .gitignore: $(mkfiles)
 	echo programming_files $(junk) | sed 's, ,\n,g' > .gitignore
 
-tb/simulate_isim.prj: $(tbfiles)
+tb/simulate_isim.prj: $(tbfiles) $(vfiles) $(mkfiles)
 	rm -f $@
 	for f in $(vfiles); do \
 		echo "verilog unenclib ../$$f" >> $@; \
@@ -199,10 +199,10 @@ tb/simulate_isim.prj: $(tbfiles)
 	done
 	echo "verilog unenclib $(iseenv)/ISE/verilog/src/glbl.v" >> $@
 
-tb/isim: tb/simulate_isim.prj
+tb/isim: tb/simulate_isim.prj $(tbfiles) $(vfiles) $(mkfiles)
 	bash -c "$(sim_env); cd ../tb/; vlogcomp -prj simulate_isim.prj"
 
-tb/simulate_isim: tb/isim
+tb/simulate_isim: tb/isim $(tbfiles) $(vfiles) $(mkfiles)
 	bash -c "$(sim_env); cd ../tb/; fuse -lib unisims_ver -lib secureip -lib xilinxcorelib_ver -lib unimacro_ver -lib iplib=./iplib -lib unenclib -o simulate_isim unenclib.tb unenclib.glbl"
 
 simulate: tb/simulate_isim
@@ -211,7 +211,7 @@ isim_cli: simulate
 	bash -c "$(sim_env); cd ../tb/; ./simulate_isim"
 
 isim: simulate
-	bash -c "$(sim_env); cd ../tb/; ./simulate_isim -gui -view signals.wcfg"
+	bash -c "$(sim_env); cd ../tb/; ./simulate_isim -gui -view signals.wcfg &"
 
 ise:
 	@echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
