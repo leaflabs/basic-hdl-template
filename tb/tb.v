@@ -15,7 +15,7 @@ reg [7:0]  Switch_input;
 wire [7:0] LED_output;
 wire       FPGA_RESET;
 
-project project_i (
+main main_i (
     .PUSH_BUTTON_RESET_RAW(FPGA_RESET),
     .LED_output_0(LED_output[0]),
     .LED_output_1(LED_output[1]),
