@@ -53,10 +53,14 @@ libmks = $(patsubst %,$(libdir)/%/module.mk,$(libs))
 mkfiles = Makefile $(libmks) contrib/xilinx.mk
 include $(libmks)
 
+# default is a single file
+tbfiles ?= ./tb/tb.v
+
 corengcs = $(foreach core,$(xilinx_cores),$(core:.xco=.ngc))
 local_corengcs = $(foreach ngc,$(corengcs),$(notdir $(ngc)))
 vfiles += $(foreach core,$(xilinx_cores),$(core:.xco=.v))
 junk += $(local_corengcs)
+tbmods = $(foreach tbm,$(tbfiles),unenclib.`basename $(tbm) .v`)
 
 .PHONY: default xilinx_cores clean twr etwr ise
 default: build/$(project).bit build/$(project).mcs
@@ -203,7 +207,7 @@ tb/isim: tb/simulate_isim.prj $(tbfiles) $(vfiles) $(mkfiles)
 	bash -c "$(sim_env); cd ../tb/; vlogcomp -prj simulate_isim.prj"
 
 tb/simulate_isim: tb/isim $(tbfiles) $(vfiles) $(mkfiles)
-	bash -c "$(sim_env); cd ../tb/; fuse -lib unisims_ver -lib secureip -lib xilinxcorelib_ver -lib unimacro_ver -lib iplib=./iplib -lib unenclib -o simulate_isim unenclib.tb unenclib.glbl"
+	bash -c "$(sim_env); cd ../tb/; fuse -lib unisims_ver -lib secureip -lib xilinxcorelib_ver -lib unimacro_ver -lib iplib=./iplib -lib unenclib -o simulate_isim $(tbmods) unenclib.glbl"
 
 simulate: tb/simulate_isim
 
@@ -224,7 +228,7 @@ ise:
 clean: clean_synth clean_sim
 
 clean_sim::
-	rm -f tb/simulate_isim tb/*.log tb/*.cmd tb/*.xmsgs
+	rm -f tb/simulate_isim tb/*.log tb/*.cmd tb/*.xmsgs tb/*.prj
 	rm -rf tb/isim
 
 clean_synth::
