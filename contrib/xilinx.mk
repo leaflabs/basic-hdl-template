@@ -147,7 +147,7 @@ junk += $(project)_summary.xml $(project)_usage.xml
 
 build/$(project).ngd: build/$(project).ngc $(project).ucf $(project).bmm
 	bash -c "$(xil_env); \
-	ngdbuild $(intstyle) $(project).ngc -bm ../$(project).bmm -sd ../cores"
+	ngdbuild $(intstyle) $(project).ngc -bm ../$(project).bmm -sd ../cores -uc ../$(project).ucf"
 junk += $(project).ngd $(project).bld
 
 build/$(project).ngc: $(vfiles) $(local_corengcs) build/$(project).scr build/$(project).prj
