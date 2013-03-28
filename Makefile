@@ -14,8 +14,10 @@ part = $(device)$(speedgrade)-$(device_package)
 hostbits = 64
 iseenv= /opt/Xilinx/14.3/ISE_DS/
 
-vfiles = ./hdl/*.v
-tbfiles = ./tb/*.v
+vfiles = hdl/project.v
+tbfiles = tb/tb.v
+
+# list of .xco files, eg "cores/bram.xco". do not include DCM files.
 xilinx_cores = 
 
 include ./contrib/xilinx.mk
