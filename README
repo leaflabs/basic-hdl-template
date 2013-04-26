@@ -80,5 +80,5 @@ Run `make coregen` and use the GUI to generate a core.
 Depending on the output, copy .v files to hdl/ and/or .xco files to cores/.
 update the Makefile.
 
-For any .xco files, strip the "Project Options" secion and the final CRC line.
+For any .xco files, strip the "Project Options" section and the final CRC line.
 
