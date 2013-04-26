@@ -1,3 +1,5 @@
+# Edit project-specific variables in this file.
+
 project = project
 top_module = main
 vendor = xilinx
@@ -18,6 +20,8 @@ vfiles = hdl/project.v
 tbfiles = tb/tb.v
 
 # list of .xco files, eg "cores/bram.xco". do not include DCM files.
+#xilinx_cores = cores/bram.xco
 xilinx_cores = 
 
+# Bulk of the actual Makefile is in a different file.
 include ./contrib/xilinx.mk

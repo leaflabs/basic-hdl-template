@@ -1,5 +1,37 @@
+
 A very basic project template for Verilog simulation and synthesis using Isim
 and Xilinx tools. 
+
+Contents:
+
+  hdl/
+    Verilog Code
+
+  tb/
+    "testbench" simulation code
+
+  docs/
+    documentation
+
+  contrib/
+    Project-independent build scripts are set here
+
+  backup/
+    A handful of old "known-good" bitfiles can get archived here.
+
+  sngdaq.ucf
+    Wired Leaf pinout definition file
+
+  Makefile
+    Project-specific build variables are set here
+
+== HOWTO Build a Bitfile =====================================================
+
+The Xilinx ISE development must be installed and licensed on the local machine.
+A set of command-line build scripts are usually used to build the project
+instead of the ISE IDE, but the later could be configured and used as well.
+
+Python and GNU make must be on the $PATH.
 
 Build a bitstream (to upload to an FPGA, preconfigured as Spartan 6 chip in
 Makefile) via:
@@ -10,14 +42,12 @@ The toplevel ucf (constraints mapping netlist objects from the verilog
 compilation to hardware resources, and place and routing and timing
 constraints) is:
 
-    ./project.ucf
+    ./sngdaq.ucf
 
 The toplevel verilog module, which does nothing (just sets some pins to zero)
 lives in:
 
-    ./hdl/project.v
-
-Add other verilog synthesis (not testbench) files to ./hdl/*.v
+    ./hdl/sngdaq.v
 
 To edit the project with the ISE GUI, try:
 
@@ -31,7 +61,7 @@ Simulate with isim via:
 
     make simulate
 
-View the results using the isim GUI with:
+View the results using isim with:
 
     make isim
 
@@ -42,3 +72,13 @@ signals from your design that are saves in the wcfg.
 ./testbench/tb.v  is the toplevel testbench file for simulation.
 
 Please improve and push!
+
+== HOWTO Coregen =============================================================
+
+Run `make coregen` and use the GUI to generate a core.
+
+Depending on the output, copy .v files to hdl/ and/or .xco files to cores/.
+update the Makefile.
+
+For any .xco files, strip the "Project Options" secion and the final CRC line.
+
