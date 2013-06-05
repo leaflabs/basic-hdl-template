@@ -67,7 +67,7 @@ local_corengcs = $(foreach ngc,$(corengcs),$(notdir $(ngc)))
 vfiles += $(foreach core,$(xilinx_cores),$(core:.xco=.v))
 tbmods = $(foreach tbm,$(tbfiles),unenclib.`basename $(tbm) .v`)
 
-.PHONY: default xilinx_cores clean twr etwr ise isim simulate coregen impact ldimpact
+.PHONY: default xilinx_cores clean twr etwr ise isim simulate coregen impact ldimpact lint
 default: build/$(project).bit build/$(project).mcs
 xilinx_cores: $(corengcs)
 twr: $(project).twr
@@ -213,6 +213,9 @@ ise:
 	@echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
 	@mkdir -p build
 	@bash -c "$(xil_env); cd ..; XIL_MAP_LOCWARN=0 ise $(project).xise &"
+
+lint:
+	verilator --lint-only -Wall -I./hdl -I./cores -Wall $(top_module)
 
 clean: clean_synth clean_sim
 	rm -rf iseconfig
