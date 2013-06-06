@@ -16,7 +16,10 @@ part = $(device)$(speedgrade)-$(device_package)
 hostbits = 64
 iseenv= /opt/Xilinx/14.3/ISE_DS/
 
+# list all .v files explicitly with vfiles (no hdl/*.v business)
 vfiles = hdl/project.v
+
+# can only specify a single test bench file here (for now)
 tbfiles = tb/tb.v
 
 # list of .xco files, eg "cores/bram.xco". do not include DCM files.
