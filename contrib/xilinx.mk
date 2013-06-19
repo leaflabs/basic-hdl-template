@@ -80,7 +80,7 @@ $(2): $(1)
 endef
 $(foreach ngc,$(corengcs),$(eval $(call cp_template,$(ngc),$(notdir $(ngc)))))
 
-$(coregen_work_dir)/$(project).cgp: contrib/template.cgp $(mkfiles)
+$(coregen_work_dir)/$(project).cgp: contrib/template.cgp
 	@if [ -d $(coregen_work_dir) ]; then \
 		rm -rf $(coregen_work_dir)/*; \
 	else \

@@ -82,3 +82,6 @@ update the Makefile.
 
 For any .xco files, strip the "Project Options" section and the final CRC line.
 
+After making any changes to the target chipset (eg, by modifying Makefile),
+you'll need to do a 'make clean' to ensure that the coregen logic is
+resynthesized correctly.
