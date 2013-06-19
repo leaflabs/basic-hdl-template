@@ -48,6 +48,7 @@ iseenvfile?= $(iseenv)/settings$(hostbits).sh
 xil_env ?= mkdir -p build/; cd ./build; source $(iseenvfile) > /dev/null
 sim_env ?= cd ./tb; source $(iseenvfile) > /dev/null
 flashsize ?= 8192
+mcs_datawidth ?= 16
 
 PWD := $(shell pwd)
 intstyle ?= -intstyle xflow
@@ -115,11 +116,11 @@ programming_files: build/$(project).bit build/$(project).mcs
 	@bash -c "$(xil_env); xst -help | head -1 | sed 's/^/#/' | cat - build/$(project).scr > $@/$(date)/$(project).scr"
 
 build/$(project).mcs: build/$(project).bit
-	@bash -c "$(xil_env); promgen -w -s $(flashsize) -p mcs -o $(project).mcs -u 0 $(project).bit"
+	@bash -c "$(xil_env); promgen -w -data_width $(mcs_datawidth) -s $(flashsize) -p mcs -o $(project).mcs -u 0 $(project).bit"
 
 build/$(project).bit: build/$(project)_par.ncd
 	@bash -c "$(xil_env); \
-	bitgen $(intstyle) -g DriveDone:yes -g StartupClk:Cclk -w $(project)_par.ncd $(project).bit"
+	bitgen $(intstyle) -g Binary:yes -g DriveDone:yes -g StartupClk:Cclk -w $(project)_par.ncd $(project).bit"
 
 
 build/$(project)_par.ncd: build/$(project).ncd
