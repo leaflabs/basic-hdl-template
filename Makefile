@@ -29,7 +29,7 @@ xilinx_cores :=
 #xilinx_cores += cores/example.xco
 
 # bitfile bitwidth for flash uploads
-mcs_datawidth = 16
+mcs_datawidth := 16
 
 # Bulk of the actual Makefile is in a different file.
 include ./contrib/xilinx.mk

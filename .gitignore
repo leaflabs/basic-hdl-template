@@ -65,3 +65,4 @@ tb/simulate_isim.prj
 iseconfig/
 build/
 coregen-tmp/
+cores/*.v

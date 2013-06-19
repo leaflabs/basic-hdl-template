@@ -61,7 +61,7 @@ Simulate with isim via:
 
     make simulate
 
-View the results using isim with:
+View the results using the isim GUI with:
 
     make isim
 
