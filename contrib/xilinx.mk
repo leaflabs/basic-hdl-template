@@ -230,7 +230,7 @@ final_fpga_editor: build/$(project)_par.ncd
 	@bash -c "$(xil_env); DISPLAY=:0 fpga_editor $(project)_par.ncd &"
 
 partial_timing: build/$(project)_post_map.twr
-	@bash -c "$(xil_env); timingan -ucf ../$(project).ucf $(project)_par.ncd $(project).pcf $(project)_post_map.twx &"
+	@bash -c "$(xil_env); timingan -ucf ../$(project).ucf $(project).ncd $(project).pcf $(project)_post_map.twx &"
 
 final_timing: build/$(project)_post_par.twr
 	@bash -c "$(xil_env); timingan -ucf ../$(project).ucf $(project)_par.ncd $(project).pcf $(project)_post_par.twx &"
