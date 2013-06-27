@@ -42,7 +42,7 @@
 synth_effort ?= high
 coregen_work_dir ?= ./coregen-tmp
 map_opts ?= -timing -ol $(synth_effort) -detail -pr b -register_duplication -w
-par_opts ?= -ol $(synth_effort) -rl $(synth_effort)
+par_opts ?= -ol $(synth_effort)
 hostbits = 64
 iseenv= /opt/Xilinx/14.3/ISE_DS
 iseenvfile?= $(iseenv)/settings$(hostbits).sh
@@ -129,7 +129,7 @@ build/$(project)_par.ncd: build/$(project).ncd build/$(project)_post_map.twr
 	if par $(intstyle) $(par_opts) -w $(project).ncd $(project)_par.ncd $(multithreading) $(colorize); then \
 		:; \
 	else \
-		echo "Oh noes! Check timing analysis? build/$(project)_post_map.twr"; \
+		false; \
 	fi "
 
 build/$(project).ncd: build/$(project).ngd
@@ -167,11 +167,11 @@ build/$(project).scr: $(optfile) $(mkfiles) ./$(project).opt
 	cp $@ build/$(project).xst
 
 build/$(project)_post_map.twr: build/$(project).ncd
-	@bash -c "$(xil_env); trce -u 10 -e 20 -l 10 $(project) -o $(project)_post_map.twr $(colorize)"
+	@bash -c "$(xil_env); trce -u 10 -e 20 -l 10 $(project).ncd $(project).pcf -o $(project)_post_map.twr $(colorize)"
 	@echo "Read $@ for timing analysis details"
 
 build/$(project)_post_par.twr: build/$(project)_par.ncd
-	@bash -c "$(xil_env); trce -u 10 -e 20 -l 10 $(project)_par -o $(project)_post_par.twr $(colorize)"
+	@bash -c "$(xil_env); trce -u 10 -e 20 -l 10 $(project)_par.ncd $(project).pcf -o $(project)_post_par.twr $(colorize)"
 	@echo "See $@ for timing analysis details"
 
 tb/simulate_isim.prj: $(tbfiles) $(vfiles) $(mkfiles)
