@@ -1,15 +1,18 @@
-NET "PUSH_BUTTON_RESET_RAW" LOC = F3;
 
 #200MHz clock
 NET "SYSTEMCLOCK" LOC = K21;
+NET "SYSTEMCLOCK" TNM_NET = "SYSTEMCLOCK";
+TIMESPEC "TS_SYSTEMCLOCK" = PERIOD "SYSTEMCLOCK" 5 ns HIGH 50%;
 
-NET "Switch_input_0" LOC = C18;
-NET "Switch_input_1" LOC = Y6;
-NET "Switch_input_2" LOC = W6;
-NET "Switch_input_3" LOC = E4;
+NET "PUSH_BUTTON_RESET_RAW" LOC = F3;
 
-NET "LED_output_1" LOC = D17;
-NET "LED_output_2" LOC = AB4;
-NET "LED_output_4" LOC = D21;
-NET "LED_output_5" LOC = W15;
+NET "gpio_switch<0>" LOC = C18;
+NET "gpio_switch<1>" LOC = Y6;
+NET "gpio_switch<2>" LOC = W6;
+NET "gpio_switch<3>" LOC = E4;
+
+NET "gpio_led<0>" LOC = D17;
+NET "gpio_led<1>" LOC = AB4;
+NET "gpio_led<2>" LOC = D21;
+NET "gpio_led<3>" LOC = W15;
 
