@@ -128,7 +128,7 @@ build/$(project)_par.ncd: build/$(project).ncd build/$(project)_post_map.twr
 	if par $(intstyle) $(par_opts) -w $(project).ncd $(project)_par.ncd $(multithreading) $(colorize); then \
 		:; \
 	else \
-		$(MAKE) etwr $(colorize); \
+		echo "Oh noes! Check timing analysis? build/$(project)_post_map.twr"; \
 	fi "
 
 build/$(project).ncd: build/$(project).ngd
