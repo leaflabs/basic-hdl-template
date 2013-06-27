@@ -68,11 +68,11 @@ local_corengcs = $(foreach ngc,$(corengcs),$(notdir $(ngc)))
 vfiles += $(foreach core,$(xilinx_cores),$(core:.xco=.v))
 tbmods = $(foreach tbm,$(tbfiles),unenclib.`basename $(tbm) .v`)
 
-.PHONY: default xilinx_cores clean twr etwr ise isim simulate coregen impact ldimpact lint
+.PHONY: default xilinx_cores clean twr_map twr_par ise isim simulate coregen impact ldimpact lint planahead partial_fpga_editor final_fpga_editor partial_timing final_timing
 default: build/$(project).bit build/$(project).mcs
 xilinx_cores: $(corengcs)
-twr: $(project).twr
-etwr: $(project)_err.twr
+twr_map: build/$(project)_post_map.twr
+twr_par: build/$(project)_post_par.twr
 
 define cp_template
 $(2): $(1)
@@ -118,12 +118,12 @@ programming_files: build/$(project).bit build/$(project).mcs
 build/$(project).mcs: build/$(project).bit
 	@bash -c "$(xil_env); promgen -w -data_width $(mcs_datawidth) -s $(flashsize) -p mcs -o $(project).mcs -u 0 $(project).bit"
 
-build/$(project).bit: build/$(project)_par.ncd
+build/$(project).bit: build/$(project)_par.ncd build/$(project)_post_par.twr
 	@bash -c "$(xil_env); \
 	bitgen $(intstyle) -g Binary:yes -g DriveDone:yes -g StartupClk:Cclk -w $(project)_par.ncd $(project).bit"
 
 
-build/$(project)_par.ncd: build/$(project).ncd
+build/$(project)_par.ncd: build/$(project).ncd build/$(project)_post_map.twr
 	@bash -c "$(xil_env); \
 	if par $(intstyle) $(par_opts) -w $(project).ncd $(project)_par.ncd $(multithreading) $(colorize); then \
 		:; \
@@ -148,7 +148,7 @@ build/$(project).ngd: build/$(project).ngc $(project).ucf $(project).bmm
 build/$(project).ngc: $(vfiles) $(local_corengcs) build/$(project).scr build/$(project).prj
 	@bash -c "$(xil_env); xst $(intstyle) -ifn $(project).scr $(colorize)"
 
-build/$(project).prj: $(vfiles) $(mkfiles)
+build/$(project).prj: $(vfiles)
 	@for src in $(vfiles); do echo "verilog work ../$$src" >> $(project).tmpprj; done
 	@sort -u $(project).tmpprj > $@
 	@rm -f $(project).tmpprj
@@ -165,14 +165,13 @@ build/$(project).scr: $(optfile) $(mkfiles) ./$(project).opt
 	@cat $(optfile) >> $@
 	cp $@ build/$(project).xst
 
-build/$(project).post_map.twr: build/$(project).ncd
-	@bash -c "$(xil_env); trce -e 10 $< $(project).pcf -o $@ $(colorize)"
+build/$(project)_post_map.twr: build/$(project).ncd
+	@bash -c "$(xil_env); trce -u 10 -e 20 -l 10 $(project) -o $(project)_post_map.twr $(colorize)"
+	@echo "Read $@ for timing analysis details"
 
-build/$(project).twr: build/$(project)_par.ncd
-	@bash -c "$(xil_env); trce $< $(project).pcf -o $(project).twr $(colorize)"
-
-build/$(project)_err.twr: build/$(project)_par.ncd
-	@bash -c "$(xil_env); trce -e 10 $< $(project).pcf -o $(project)_err.twr $(colorize)"
+build/$(project)_post_par.twr: build/$(project)_par.ncd
+	@bash -c "$(xil_env); trce -u 10 -e 20 -l 10 $(project)_par -o $(project)_post_par.twr $(colorize)"
+	@echo "See $@ for timing analysis details"
 
 tb/simulate_isim.prj: $(tbfiles) $(vfiles) $(mkfiles)
 	@rm -f $@
@@ -214,6 +213,25 @@ ise:
 	@echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
 	@mkdir -p build
 	@bash -c "$(xil_env); cd ..; XIL_MAP_LOCWARN=0 ise $(project).xise &"
+
+planahead:
+	@bash -c "$(xil_env); cd ..; planAhead &"
+
+# TODO: DISPLAY = `echo $DISPLAY |sed s/'\.0'//`
+partial_fpga_editor: build/$(project).ncd
+	@echo "Starting fpga_editor in the background (can take a minute or two)..."
+	@bash -c "$(xil_env); DISPLAY=:0 fpga_editor $(project).ncd &"
+
+# TODO: DISPLAY = `echo $DISPLAY |sed s/'\.0'//`
+final_fpga_editor: build/$(project)_par.ncd
+	@echo "Starting fpga_editor in the background (can take a minute or two)..."
+	@bash -c "$(xil_env); DISPLAY=:0 fpga_editor $(project)_par.ncd &"
+
+partial_timing: build/$(project)_post_map.twr
+	@bash -c "$(xil_env); timingan -ucf ../$(project).ucf $(project)_par.ncd $(project).pcf $(project)_post_map.twx &"
+
+final_timing: build/$(project)_post_par.twr
+	@bash -c "$(xil_env); timingan -ucf ../$(project).ucf $(project)_par.ncd $(project).pcf $(project)_post_par.twx &"
 
 lint:
 	verilator --lint-only -Wall -I./hdl -I./cores -Wall $(top_module)
