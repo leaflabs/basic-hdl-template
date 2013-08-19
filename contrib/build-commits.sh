@@ -1,9 +1,12 @@
 #!/bin/bash
 
 
-echo "Usage: $0 first-commit last-commit  (e.g. $0 97de5 HEAD)"
+echo "Usage: $0 GIT-RANGE  (e.g. $0 97de5..HEAD)"
+COMMITS=$(git log --oneline $1 | awk '{print $1;}')
 
-for commit in $(  git log --oneline $1..$2 | awk '{print $1;}' ); do
+echo operating on: $COMMITS
+
+for commit in $COMMITS; do
     echo Building Commit: $commit
 
     echo Creating directory build-$commit
@@ -28,4 +31,7 @@ for commit in $(  git log --oneline $1..$2 | awk '{print $1;}' ); do
     echo Finished building $commit
 done
 
-echo "Done!"
+echo Checking out master
+git checkout master
+
+echo Done!
