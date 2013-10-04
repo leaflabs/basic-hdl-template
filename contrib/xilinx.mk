@@ -233,6 +233,9 @@ final_fpga_editor: build/$(project)_par.ncd
 	@echo "Starting fpga_editor in the background (can take a minute or two)..."
 	@bash -c "$(xil_env); DISPLAY=:0 fpga_editor $(project)_par.ncd &"
 
+timingan:
+	@bash -c "$(xil_env); timingan &"
+
 partial_timing: build/$(project)_post_map.twr
 	@bash -c "$(xil_env); timingan -ucf ../$(project).ucf $(project).ncd $(project).pcf $(project)_post_map.twx &"
 
