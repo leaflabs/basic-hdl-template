@@ -212,6 +212,9 @@ impact:
 ldimpact:
 	@bash -c "$(xil_env); cd ../build; LD_PRELOAD=/usr/local/lib/libusb-driver.so impact &"
 
+autoimpact:
+	@bash -c "$(xil_env); cd ../build; impact -mode bscan -b build/$(project).bit -port auto -autoassign &"
+
 ise:
 	@echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
 	@echo "! WARNING: you might need to update ISE's project settings !"
