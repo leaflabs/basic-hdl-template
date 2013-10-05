@@ -6,26 +6,27 @@
 #
 # TODO: update these listings
 #
-#   variable	description
-#   ----------  -------------
-#   project	project name (top level module should match this name)
-#   top_module  top level module of the project
-#   libdir	path to library directory
-#   libs	library modules used
-#   vfiles	all local .v files
+#   variable      description
+#   ----------    -------------
+#   board         board target short-name
+#   project       project name (top level module should match this name)
+#   top_module    top level module of the project
+#   libdir        path to library directory
+#   libs          library modules used
+#   vfiles        all local .v files
 #   xilinx_cores  all local .xco files
-#   vendor      vendor of FPGA (xilinx, altera, etc.)
-#   family      FPGA device family (spartan3e) 
-#   part        FPGA part name (xc4vfx12-10-sf363)
-#   flashsize   size of flash for mcs file (16384)
-#   optfile     (optional) xst extra opttions file to put in .scr
-#   map_opts    (optional) options to give to map
-#   par_opts    (optional) options to give to par
-#   intstyle    (optional) intstyle option to all tools
+#   vendor        vendor of FPGA (xilinx, altera, etc.)
+#   family        FPGA device family (spartan3e) 
+#   part          FPGA part name (xc4vfx12-10-sf363)
+#   flashsize     size of flash for mcs file (16384)
+#   optfile       (optional) xst extra opttions file to put in .scr
+#   map_opts      (optional) options to give to map
+#   par_opts      (optional) options to give to par
+#   intstyle      (optional) intstyle option to all tools
 #
-#   files 		description
-#   ----------  	------------
-#   $(project).ucf	ucf file
+#   files         description
+#   ----------    ------------
+#   $(board).ucf  ucf file
 #
 # Library modules should have a modules.mk in their root directory,
 # namely $(libdir)/<libname>/module.mk, that simply adds to the vfiles
@@ -145,9 +146,9 @@ build/$(project).ncd: build/$(project).ngd
 	bash -c "$(xil_env); \
 	map $(intstyle) $(map_opts) $$smartguide $(project).ngd $(multithreading) $(colorize)"
 
-build/$(project).ngd: build/$(project).ngc $(project).ucf $(project).bmm
+build/$(project).ngd: build/$(project).ngc $(board).ucf $(board).bmm
 	@bash -c "$(xil_env); \
-	ngdbuild $(intstyle) $(project).ngc -bm ../$(project).bmm -sd ../cores -uc ../$(project).ucf -aul $(colorize)"
+	ngdbuild $(intstyle) $(project).ngc -bm ../$(board).bmm -sd ../cores -uc ../$(board).ucf -aul $(colorize)"
 
 build/$(project).ngc: $(vfiles) $(local_corengcs) build/$(project).scr build/$(project).prj
 	@bash -c "rm build/$(project).scr; make build/$(project).scr"
@@ -240,10 +241,10 @@ timingan:
 	@bash -c "$(xil_env); timingan &"
 
 partial_timing: build/$(project)_post_map.twr
-	@bash -c "$(xil_env); timingan -ucf ../$(project).ucf $(project).ncd $(project).pcf $(project)_post_map.twx &"
+	@bash -c "$(xil_env); timingan -ucf ../$(board).ucf $(project).ncd $(project).pcf $(project)_post_map.twx &"
 
 final_timing: build/$(project)_post_par.twr
-	@bash -c "$(xil_env); timingan -ucf ../$(project).ucf $(project)_par.ncd $(project).pcf $(project)_post_par.twx &"
+	@bash -c "$(xil_env); timingan -ucf ../$(board).ucf $(project)_par.ncd $(project).pcf $(project)_post_par.twx &"
 
 lint:
 	verilator --lint-only -Wall -I./hdl -I./cores -Wall $(top_module)

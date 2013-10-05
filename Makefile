@@ -5,19 +5,27 @@ top_module := main
 vendor := xilinx
 
 # This is the chipset from the Xilinx SP605 dev board
+board := sp605
 family := spartan6
 device := xc6slx45t
 speedgrade := -3
 device_package := fgg484
-part := $(device)$(speedgrade)-$(device_package)
 
+# This is the chipset for the Xess Xula 2 dev board
+#board := xula2
+#family := spartan6
+#device := XC6SLX25
+#speedgrade := -2
+#device_package := ft256
+
+part := $(device)$(speedgrade)-$(device_package)
 
 # is this build host 64 or 32 bits?
 hostbits := 64
 iseenv := /opt/Xilinx/14.3/ISE_DS/
 
 # list all .v files explicitly with vfiles (no hdl/*.v business)
-vfiles := hdl/project.v
+vfiles := hdl/$(top_module)_$(board).v
 #vfiles += hdl/yours.v
 
 # can only specify a single test bench file here (for now)
