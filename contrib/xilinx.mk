@@ -13,7 +13,7 @@
 #   top_module    top level module of the project
 #   libdir        path to library directory
 #   libs          library modules used
-#   vfiles        all local .v files
+#   verilog_files all local .v files
 #   xilinx_cores  all local .xco files
 #   vendor        vendor of FPGA (xilinx, altera, etc.)
 #   family        FPGA device family (spartan3e) 
@@ -29,7 +29,7 @@
 #   $(board).ucf  ucf file
 #
 # Library modules should have a modules.mk in their root directory,
-# namely $(libdir)/<libname>/module.mk, that simply adds to the vfiles
+# namely $(libdir)/<libname>/module.mk, that simply adds to the verilog_files
 # and xilinx_cores variable.
 #
 # all the .xco files listed in xilinx_cores will be generated with core, with
@@ -58,6 +58,7 @@ mcs_datawidth ?= 16
 PWD := $(shell pwd)
 intstyle ?= -intstyle xflow
 colorize ?= 2>&1 | python $(PWD)/contrib/colorize.py red ERROR: yellow WARNING: green \"Number of error messages: 0\" green \"Number of error messages:\t0\" green \"Number of errors:     0\"
+colorizetest ?= 2>&1 | python $(PWD)/contrib/colorize.py red FAIL green PASS
 
 multithreading ?= -mt 4
 
@@ -67,13 +68,18 @@ include $(libmks)
 
 # default is a single file
 tbfiles ?= ./tb/tb.v
+testfiles ?=
 
 corengcs = $(foreach core,$(xilinx_cores),$(core:.xco=.ngc))
 local_corengcs = $(foreach ngc,$(corengcs),$(notdir $(ngc)))
-vfiles += $(foreach core,$(xilinx_cores),$(core:.xco=.v))
+verilog_files += $(foreach core,$(xilinx_cores),$(core:.xco=.v))
+tbfiles += $(foreach tfile,$(testfiles),$(tfile))
 tbmods = $(foreach tbm,$(tbfiles),unenclib.`basename $(tbm) .v`)
 
-.PHONY: default xilinx_cores clean twr_map twr_par ise isim simulate coregen impact ldimpact lint planahead partial_fpga_editor final_fpga_editor partial_timing final_timing
+.PHONY: default xilinx_cores clean twr_map twr_par ise isim simulate coregen impact ldimpact lint planahead partial_fpga_editor final_fpga_editor partial_timing final_timing tests
+
+.PRECIOUS: tb/%.isim
+
 default: build/$(project).bit build/$(project).mcs
 xilinx_cores: $(corengcs)
 twr_map: build/$(project)_post_map.twr
@@ -150,12 +156,12 @@ build/$(project).ngd: build/$(project).ngc $(board).ucf $(board).bmm
 	@bash -c "$(xil_env); \
 	ngdbuild $(intstyle) $(project).ngc -bm ../$(board).bmm -sd ../cores -uc ../$(board).ucf -aul $(colorize)"
 
-build/$(project).ngc: $(vfiles) $(local_corengcs) build/$(project).scr build/$(project).prj
+build/$(project).ngc: $(verilog_files) $(local_corengcs) build/$(project).scr build/$(project).prj
 	@bash -c "rm build/$(project).scr; make build/$(project).scr"
 	@bash -c "$(xil_env); xst $(intstyle) -ifn $(project).scr $(colorize)"
 
-build/$(project).prj: $(vfiles)
-	@for src in $(vfiles); do echo "verilog work ../$$src" >> $(project).tmpprj; done
+build/$(project).prj: $(verilog_files)
+	@for src in $(verilog_files); do echo "verilog work ../$$src" >> $(project).tmpprj; done
 	@sort -u $(project).tmpprj > $@
 	@rm -f $(project).tmpprj
 
@@ -180,9 +186,9 @@ build/$(project)_post_par.twr: build/$(project)_par.ncd
 	@bash -c "$(xil_env); trce $(unconst_timing) -e $(const_timing_limit) -l $(const_timing_limit) $(project)_par.ncd $(project).pcf -o $(project)_post_par.twr $(colorize)"
 	@echo "See $@ for timing analysis details"
 
-tb/simulate_isim.prj: $(tbfiles) $(vfiles) $(mkfiles)
+tb/simulate_isim.prj: $(tbfiles) $(verilog_files) $(mkfiles)
 	@rm -f $@
-	@for f in $(vfiles); do \
+	@for f in $(verilog_files); do \
 		echo "verilog unenclib ../$$f" >> $@; \
 	done
 	@for f in $(tbfiles); do \
@@ -190,16 +196,32 @@ tb/simulate_isim.prj: $(tbfiles) $(vfiles) $(mkfiles)
 	done
 	@echo "verilog unenclib $(iseenv)/ISE/verilog/src/glbl.v" >> $@
 
-tb/isim: tb/simulate_isim.prj $(tbfiles) $(vfiles) $(mkfiles)
+tb/isim.compiled: tb/simulate_isim.prj $(tbfiles) $(verilog_files) $(mkfiles)
 	@bash -c "$(sim_env); cd ../tb/; vlogcomp -prj simulate_isim.prj $(colorize)"
+	@touch tb/isim.compiled
 
-tb/simulate_isim: tb/isim $(tbfiles) $(vfiles) $(mkfiles)
+tb/simulate_isim: tb/isim.compiled
 	@bash -c "$(sim_env); cd ../tb/; fuse -lib unisims_ver -lib secureip -lib xilinxcorelib_ver -lib unimacro_ver -lib iplib=./iplib -lib unenclib -o simulate_isim $(tbmods) unenclib.glbl $(colorize)"
 
 simulate: tb/simulate_isim
 
 isim_cli: simulate
 	@bash -c "$(sim_env); cd ../tb/; ./simulate_isim"
+
+tb/%.isim: tb/%.v tb/isim.compiled
+	@uut=`basename $< .v`; \
+	bash -c "$(sim_env); cd ../tb/; fuse -lib unisims_ver -lib secureip -lib xilinxcorelib_ver -lib unimacro_ver -lib iplib=./iplib -lib unenclib -o $$uut.isim unenclib.$$uut unenclib.glbl $(colorize)"
+
+isim/%: tb/%.isim tb/simulate_isim.prj
+	@uut=`basename $@`; \
+	bash -c "$(sim_env); cd ../tb; ./$$uut.isim -gui -view $$uut.wcfg &"
+
+test/%: tb/%.isim tb/simulate_isim.prj
+	@echo "run all" > ./tb/test.tcl
+	@uut=`basename $@`; \
+	bash -c "$(sim_env); cd ../tb/; ./$$uut.isim -tclbatch test.tcl $(colorizetest)"
+
+tests: $(alltests)
 
 isim: simulate
 	@bash -c "$(sim_env); cd ../tb/; ./simulate_isim -gui -view signals.wcfg &"
@@ -253,7 +275,7 @@ clean: clean_synth clean_sim
 	rm -rf iseconfig
 
 clean_sim::
-	rm -f tb/simulate_isim tb/*.log tb/*.cmd tb/*.xmsgs tb/*.prj
+	rm -f tb/simulate_isim tb/*.log tb/*.cmd tb/*.xmsgs tb/*.prj tb/*.isim tb/isim.compiled
 	rm -rf tb/isim
 
 clean_synth::

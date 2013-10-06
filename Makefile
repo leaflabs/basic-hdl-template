@@ -24,13 +24,18 @@ part := $(device)$(speedgrade)-$(device_package)
 hostbits := 64
 iseenv := /opt/Xilinx/14.3/ISE_DS/
 
-# list all .v files explicitly with vfiles (no hdl/*.v business)
-vfiles := hdl/$(top_module)_$(board).v
-#vfiles += hdl/yours.v
+# list all .v files explicitly with verilog_files (no hdl/*.v business)
+verilog_files := hdl/$(top_module)_$(board).v
+#verilog_files += hdl/yours.v
 
-# can only specify a single test bench file here (for now)
-tbfiles := tb/tb.v
-#tbfiles += hdl/yours.v
+tbfiles := tb/main_tb.v
+tbfiles += tb/another_tb.v
+tbfiles += tb/trivial_test.v
+tbfiles += tb/complicated_test.v
+
+# what gets run 
+alltests := test/trivial_test
+alltests += test/complicated_test
 
 # list of .xco files, eg "cores/bram.xco". do not include DCM files.
 xilinx_cores := 

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="./isim.wdb" id="1" type="auto">
+         <top_modules>
+            <top_module name="another_tb" />
+            <top_module name="glbl" />
+            <top_module name="main_tb" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <WVObjectSize size="4" />
+   <wvobject fp_name="/main_tb/CLK100" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">CLK100</obj_property>
+      <obj_property name="ObjectShortName">CLK100</obj_property>
+   </wvobject>
+   <wvobject fp_name="/main_tb/FPGA_RESET" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">FPGA_RESET</obj_property>
+      <obj_property name="ObjectShortName">FPGA_RESET</obj_property>
+   </wvobject>
+   <wvobject fp_name="/main_tb/Switch_input" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">Switch_input[3:0]</obj_property>
+      <obj_property name="ObjectShortName">Switch_input[3:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/main_tb/LED_output" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">LED_output[3:0]</obj_property>
+      <obj_property name="ObjectShortName">LED_output[3:0]</obj_property>
+   </wvobject>
+</wave_config>

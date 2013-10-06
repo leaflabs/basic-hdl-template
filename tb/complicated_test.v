@@ -1,5 +1,5 @@
 `timescale 1ps/1ps
-module tb;
+module complicated_test;
 
    reg CLK100;
 always @(CLK100) begin
@@ -25,11 +25,12 @@ main main_i (
 
 initial begin
  #0         Switch_input <= 4'h00;
+ $display("FAIL");
  $display("Switch set to zero");
  #1000000  Switch_input <= 4'h01;
  $display("Switch set to one");
  #2000000
- $display("TEST COMPLETE");
+ $display("PASS");
  $finish();
 end
 

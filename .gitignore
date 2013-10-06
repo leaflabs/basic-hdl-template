@@ -39,6 +39,7 @@ webtalk.log
 xlnx_auto_0_xdb
 *.log
 isim.wdb
+isim*.wdb
 *.xmsgs
 fuseRelaunch.cmd
 isim.wdb
@@ -60,8 +61,11 @@ webtalk_pn.xml
 *.prm
 *.psr
 *.scr
+tb/*.isim
 tb/simulate_isim
 tb/simulate_isim.prj
+tb/isim.compiled
+tb/test.tcl
 iseconfig/
 build/
 coregen-tmp/
