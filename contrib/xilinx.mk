@@ -269,7 +269,7 @@ final_timing: build/$(project)_post_par.twr
 	@bash -c "$(xil_env); timingan -ucf ../$(board).ucf $(project)_par.ncd $(project).pcf $(project)_post_par.twx &"
 
 lint:
-	verilator --lint-only -Wall -I./hdl -I./cores -Wall $(top_module)
+	verilator --lint-only -Wall -I./hdl -I./cores -Wall -Wno-DECLFILENAME hdl/$(top_module)_$(board)
 
 clean: clean_synth clean_sim
 	rm -rf iseconfig
