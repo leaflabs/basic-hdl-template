@@ -19,7 +19,6 @@ device := XC6SLX25
 speedgrade := -2
 device_package := ftg256
 extra_includes = ./contrib/xula2.mk
-include ./contrib/xula2.mk
 
 part := $(device)$(speedgrade)-$(device_package)
 

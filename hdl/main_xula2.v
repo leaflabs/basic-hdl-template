@@ -36,7 +36,7 @@ module main (
     wire [7:0] rx_byte;
     wire [7:0] tx_byte;
     wire uart_flag;
-    simple_uart (
+    simple_uart #(
         .CLOCK_DIVIDE(313) // for 12MHz clock
     ) simple_uart_inst (
         .clk(clock_12mhz),
