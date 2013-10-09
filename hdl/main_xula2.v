@@ -25,8 +25,9 @@ module main (
     output wire flash_miso
     );
 
-    wire reset;
-    assign reset = chan[0];
+    wire reset = chan[0];
+    wire uart_rx = chan[17];
+    wire uart_tx = chan[18];
 
     reg [22:0] throb_counter = 0;
     reg throb_led = 0;
@@ -35,7 +36,9 @@ module main (
     wire [7:0] rx_byte;
     wire [7:0] tx_byte;
     wire uart_flag;
-    simple_uart simple_uart_inst (
+    simple_uart (
+        .CLOCK_DIVIDE(313) // for 12MHz clock
+    ) simple_uart_inst (
         .clk(clock_12mhz),
         .rst(reset),
         .rx(chan[17]),
