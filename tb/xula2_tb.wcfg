@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="./isim.wdb" id="1" type="auto">
+         <top_modules>
+            <top_module name="glbl" />
+            <top_module name="xula2_tb" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <WVObjectSize size="4" />
+   <wvobject fp_name="/xula2_tb/synth_clk_12mhz" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">synth_clk_12mhz</obj_property>
+      <obj_property name="ObjectShortName">synth_clk_12mhz</obj_property>
+   </wvobject>
+   <wvobject fp_name="/xula2_tb/chan" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">chan[31:0]</obj_property>
+      <obj_property name="ObjectShortName">chan[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/xula2_tb/reset" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">reset</obj_property>
+      <obj_property name="ObjectShortName">reset</obj_property>
+   </wvobject>
+   <wvobject fp_name="/xula2_tb/led" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">led</obj_property>
+      <obj_property name="ObjectShortName">led</obj_property>
+   </wvobject>
+</wave_config>

@@ -5,18 +5,18 @@ top_module := main
 vendor := xilinx
 
 # This is the chipset from the Xilinx SP605 dev board
-board := sp605
-family := spartan6
-device := xc6slx45t
-speedgrade := -3
-device_package := fgg484
+#board := sp605
+#family := spartan6
+#device := xc6slx45t
+#speedgrade := -3
+#device_package := fgg484
 
 # This is the chipset for the Xess Xula 2 dev board
-#board := xula2
-#family := spartan6
-#device := XC6SLX25
-#speedgrade := -2
-#device_package := ft256
+board := xula2
+family := spartan6
+device := XC6SLX25
+speedgrade := -2
+device_package := ftg256
 
 part := $(device)$(speedgrade)-$(device_package)
 
@@ -26,16 +26,16 @@ iseenv := /opt/Xilinx/14.3/ISE_DS/
 
 # list all .v files explicitly with verilog_files (no hdl/*.v business)
 verilog_files := hdl/$(top_module)_$(board).v
+verilog_files += hdl/rot13.v
 #verilog_files += hdl/yours.v
 
-tbfiles := tb/main_tb.v
-tbfiles += tb/another_tb.v
-tbfiles += tb/trivial_test.v
-tbfiles += tb/complicated_test.v
+tbfiles := tb/rot13_tb.v
+tbfiles += tb/xula2_tb.v
+#tbfiles += tb/sp605_tb.v
 
 # what gets run 
 alltests := test/trivial_test
-alltests += test/complicated_test
+alltests += test/rot13_tb
 
 # list of .xco files, eg "cores/bram.xco". do not include DCM files.
 xilinx_cores := 
@@ -48,4 +48,5 @@ mcs_datawidth := 16
 include ./contrib/xilinx.mk
 
 # Example hardware-specific targets (eg, upload via SPI)
-include ./contrib/example-device.mk
+#include ./contrib/example-device.mk
+include ./contrib/xula2.mk

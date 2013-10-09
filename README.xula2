@@ -1,0 +1,16 @@
+
+To upload bitfiles to the xula2 board, you first need to install the "xstools"
+python package:
+
+    https://pypi.python.org/pypi/XsTools/
+
+IMPORTANT: if you get the following error when using the xstest.py python tool
+with a xula2 board on linux:
+
+    usb.core.USBError: [Errno 5] Input/output error
+
+and then your board resets (LED turns off), then you probably need to first
+upgrade the PIC microcontroller firmware:
+
+    sudo xsusbprg.py
+

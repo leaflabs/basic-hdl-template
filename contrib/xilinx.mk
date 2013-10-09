@@ -129,9 +129,9 @@ programming_files: build/$(project).bit build/$(project).mcs
 build/$(project).mcs: build/$(project).bit
 	@bash -c "$(xil_env); promgen -w -data_width $(mcs_datawidth) -s $(flashsize) -p mcs -o $(project).mcs -u 0 $(project).bit"
 
-build/$(project).bit: build/$(project)_par.ncd build/$(project)_post_par.twr
+build/$(project).bit: build/$(project)_par.ncd build/$(project)_post_par.twr $(board).bitconf
 	@bash -c "$(xil_env); \
-	bitgen $(intstyle) -g Binary:yes -g DriveDone:yes -g StartupClk:Cclk -w $(project)_par.ncd $(project).bit"
+	bitgen $(intstyle) -f ../$(board).bitconf -w $(project)_par.ncd $(project).bit"
 
 
 build/$(project)_par.ncd: build/$(project).ncd build/$(project)_post_map.twr

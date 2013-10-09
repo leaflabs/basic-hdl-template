@@ -1,0 +1,7 @@
+-g Binary:yes
+# below are xula2-specific configurations
+-g UnusedPin:Pullnone
+-g TckPin:Pullnone
+#-g StartupClk:JtagClk  # for JTAG upload
+-g StartupClk:Cclk      # for serial flash
+-g ConfigRate:10        # for fast serial flashing

@@ -1,0 +1,69 @@
+# ============================================================================
+#   Xess Corp XuLa 2
+# ============================================================================
+
+# Originally written October 2013 by LeafLabs, LLC (leaflabs.com).
+
+# The .ucf supplied by Xess is under GPL. 
+# https://raw.github.com/xesscorp/XuLA2/master/FPGA/XuLA_lib/XuLA2.ucf
+
+# This file was written from scratch from the manual. It is intended to be
+# reused and copy/pasted from with no copyright or attribution necessary.  In
+# that an explicit license is necessary for such a file, it is Creative Commons
+# Zero.
+
+# ==== Clocks ====
+
+NET "clock_12mhz" LOC = "A9";
+NET "clock_12mhz" IOSTANDARD = LVTTL;
+NET "clock_12mhz" TNM_NET = "clock_12mhz";
+TIMESPEC "TS_clock_12mhz" = PERIOD "clock_12mhz" 12 MHz HIGH 50%;
+
+# ==== Prototyping Header (GPIO) ====
+
+NET "chan_clk" LOC = "T7"       | IOSTANDARD = LVTTL ;
+
+NET "chan<0>"  LOC = "R7"       | IOSTANDARD = LVTTL ;
+NET "chan<1>"  LOC = "R15"      | IOSTANDARD = LVTTL ;
+NET "chan<2>"  LOC = "R16"      | IOSTANDARD = LVTTL ;
+NET "chan<3>"  LOC = "M15"      | IOSTANDARD = LVTTL ;
+NET "chan<4>"  LOC = "M16"      | IOSTANDARD = LVTTL ;
+NET "chan<5>"  LOC = "K15"      | IOSTANDARD = LVTTL ;
+NET "chan<6>"  LOC = "K16"      | IOSTANDARD = LVTTL ;
+NET "chan<7>"  LOC = "J16"      | IOSTANDARD = LVTTL ;
+NET "chan<8>"  LOC = "J14"      | IOSTANDARD = LVTTL ;
+NET "chan<9>"  LOC = "F15"      | IOSTANDARD = LVTTL ;
+NET "chan<10>" LOC = "F16"      | IOSTANDARD = LVTTL ;
+NET "chan<11>" LOC = "C16"      | IOSTANDARD = LVTTL ;
+NET "chan<12>" LOC = "C15"      | IOSTANDARD = LVTTL ;
+NET "chan<13>" LOC = "B16"      | IOSTANDARD = LVTTL ;
+NET "chan<14>" LOC = "B15"      | IOSTANDARD = LVTTL ;
+NET "chan<15>" LOC = "T4"       | IOSTANDARD = LVTTL ;
+NET "chan<16>" LOC = "R2"       | IOSTANDARD = LVTTL ;
+NET "chan<17>" LOC = "R1"       | IOSTANDARD = LVTTL ;
+NET "chan<18>" LOC = "M2"       | IOSTANDARD = LVTTL ;
+NET "chan<19>" LOC = "M1"       | IOSTANDARD = LVTTL ;
+NET "chan<20>" LOC = "K3"       | IOSTANDARD = LVTTL ;
+NET "chan<21>" LOC = "J4"       | IOSTANDARD = LVTTL ;
+NET "chan<22>" LOC = "H1"       | IOSTANDARD = LVTTL ;
+NET "chan<23>" LOC = "H2"       | IOSTANDARD = LVTTL ;
+NET "chan<24>" LOC = "F1"       | IOSTANDARD = LVTTL ;
+NET "chan<25>" LOC = "F2"       | IOSTANDARD = LVTTL ;
+NET "chan<26>" LOC = "E1"       | IOSTANDARD = LVTTL ;
+NET "chan<27>" LOC = "E2"       | IOSTANDARD = LVTTL ;
+NET "chan<28>" LOC = "C1"       | IOSTANDARD = LVTTL ;
+NET "chan<29>" LOC = "B1"       | IOSTANDARD = LVTTL ;
+NET "chan<30>" LOC = "B2"       | IOSTANDARD = LVTTL ;
+NET "chan<31>" LOC = "A2"       | IOSTANDARD = LVTTL ;
+
+# ==== SDRAM ====
+# TODO
+
+# ==== SPI Flash and uSD Card ====
+
+NET "microsd_cs" LOC = "T8"     | IOSTANDARD = LVTTL ;
+NET "flash_cs" LOC = "T3"       | IOSTANDARD = LVTTL ;
+NET "flash_sclk" LOC = "R11"    | IOSTANDARD = LVTTL ;
+NET "flash_mosi" LOC = "T10"    | IOSTANDARD = LVTTL ;
+NET "flash_miso" LOC = "P10"    | IOSTANDARD = LVTTL ;
+
