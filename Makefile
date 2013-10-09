@@ -10,6 +10,7 @@ vendor := xilinx
 #device := xc6slx45t
 #speedgrade := -3
 #device_package := fgg484
+#extra_includes = ./contrib/example-device.mk
 
 # This is the chipset for the Xess Xula 2 dev board
 board := xula2
@@ -17,8 +18,11 @@ family := spartan6
 device := XC6SLX25
 speedgrade := -2
 device_package := ftg256
+extra_includes = ./contrib/xula2.mk
+include ./contrib/xula2.mk
 
 part := $(device)$(speedgrade)-$(device_package)
+
 
 # is this build host 64 or 32 bits?
 hostbits := 64
@@ -49,5 +53,4 @@ mcs_datawidth := 16
 include ./contrib/xilinx.mk
 
 # Example hardware-specific targets (eg, upload via SPI)
-#include ./contrib/example-device.mk
-include ./contrib/xula2.mk
+include $(extra_includes)
