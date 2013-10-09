@@ -167,7 +167,7 @@ build/$(project).prj: $(verilog_files)
 
 optfile += $(wildcard $(project).opt)
 top_module ?= $(project)
-build/$(project).scr: $(optfile) $(mkfiles) ./$(project).opt
+build/$(project).scr: $(optfile) ./$(project).opt
 	mkdir -p build
 	@echo "run" > $@
 	@echo "-p $(part)" >> $@
@@ -186,7 +186,7 @@ build/$(project)_post_par.twr: build/$(project)_par.ncd
 	@bash -c "$(xil_env); trce $(unconst_timing) -e $(const_timing_limit) -l $(const_timing_limit) $(project)_par.ncd $(project).pcf -o $(project)_post_par.twr $(colorize)"
 	@echo "See $@ for timing analysis details"
 
-tb/simulate_isim.prj: $(tbfiles) $(verilog_files) $(mkfiles)
+tb/simulate_isim.prj: $(tbfiles) $(verilog_files)
 	@rm -f $@
 	@for f in $(verilog_files); do \
 		echo "verilog unenclib ../$$f" >> $@; \
@@ -196,7 +196,7 @@ tb/simulate_isim.prj: $(tbfiles) $(verilog_files) $(mkfiles)
 	done
 	@echo "verilog unenclib $(iseenv)/ISE/verilog/src/glbl.v" >> $@
 
-tb/isim.compiled: tb/simulate_isim.prj $(tbfiles) $(verilog_files) $(mkfiles)
+tb/isim.compiled: tb/simulate_isim.prj $(tbfiles) $(verilog_files)
 	@bash -c "$(sim_env); cd ../tb/; vlogcomp -prj simulate_isim.prj $(colorize)"
 	@touch tb/isim.compiled
 
