@@ -1,6 +1,6 @@
 # Edit project-specific variables in this file.
 
-project := project
+project := exampleproj
 top_module := main
 vendor := xilinx
 
