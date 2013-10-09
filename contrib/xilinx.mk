@@ -159,6 +159,8 @@ build/$(project).ngd: build/$(project).ngc $(board).ucf $(board).bmm
 build/$(project).ngc: $(verilog_files) $(local_corengcs) build/$(project).scr build/$(project).prj
 	@bash -c "rm build/$(project).scr; make build/$(project).scr"
 	@bash -c "$(xil_env); xst $(intstyle) -ifn $(project).scr $(colorize)"
+	@# need to check for success manually; TODO: doesn't work if pre-existed
+	@if [ ! -f build/$(project).ngc ]; then false; fi
 
 build/$(project).prj: $(verilog_files)
 	@for src in $(verilog_files); do echo "verilog work ../$$src" >> $(project).tmpprj; done
