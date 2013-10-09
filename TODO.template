@@ -1,0 +1,18 @@
+
+switch to .EXPORT_ALL_VARIABLES and/or .ONESHELL (as a refactor/cleanup)?
+    or is that too gmake specific...
+
+BUG: synth still seems to continue even if first build (verilog compile)
+     fails
+
+add .PRECIOUS for intermediate files we don't want to get deleted
+
+for fpga_editor:
+    DISPLAY=`echo $DISPLAY |sed s/'\.0'//` fpga_editor <.ncd file>
+
+effort levels seem high by default:
+    Overall effort level (-ol):   High 
+    Router effort level (-rl):    High 
+
+impact:
+    impact -mode bscan -b build/sp605.bit -port auto -autoassign (needs testing)
