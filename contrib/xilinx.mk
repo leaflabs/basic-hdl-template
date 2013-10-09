@@ -216,6 +216,9 @@ isim/%: tb/%.isim tb/simulate_isim.prj
 	@uut=`basename $@`; \
 	bash -c "$(sim_env); cd ../tb; ./$$uut.isim -gui -view $$uut.wcfg &"
 
+resim/%: tb/%.isim tb/simulate_isim.prj
+	@true
+
 test/%: tb/%.isim tb/simulate_isim.prj
 	@echo "run all" > ./tb/test.tcl
 	@uut=`basename $@`; \

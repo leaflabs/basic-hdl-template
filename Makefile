@@ -33,9 +33,9 @@ tbfiles := tb/rot13_tb.v
 tbfiles += tb/xula2_tb.v
 #tbfiles += tb/sp605_tb.v
 
-# what gets run 
-alltests := test/trivial_test
-alltests += test/rot13_tb
+# what gets run by "make tests"
+alltests := test/rot13_tb
+#tbfiles += tb/yourtest_tb.v
 
 # list of .xco files, eg "cores/bram.xco". do not include DCM files.
 xilinx_cores := 

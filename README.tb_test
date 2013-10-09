@@ -1,0 +1,12 @@
+
+"testbenches" are helpful wrappers which exersize a piece of code. they should
+live in ./tb/, end in "_tb.v" or "_tb.vhd", and have a signal file (ending in
+"_tb.wcfg") associated with the same name. update the 'tbfiles' list in
+Makefile. invoke the isim GUI with "make isim/name_tb" (for tb/name_tb.v). if
+you make a source code change and don't want to reload the whole GUI, you can
+do "make resim/name_tb" and then click the "Re-load" button.
+
+testbenches which can act as headless unit tests (reporting pass/fail by
+printing to stdout) should be added to the 'alltests' list in Makefile. run the
+test with 'make test/name_tb'; run all tests with 'make tests'.
+
