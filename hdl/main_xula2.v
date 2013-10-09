@@ -32,6 +32,30 @@ module main (
     reg throb_led = 0;
     assign chan[10] = throb_led;
 
+    wire [7:0] rx_byte;
+    wire [7:0] tx_byte;
+    wire uart_flag;
+    simple_uart simple_uart_inst (
+        .clk(clock_12mhz),
+        .rst(reset),
+        .rx(chan[17]),
+        .tx(chan[18]),
+        .transmit(uart_flag),
+        .tx_byte(tx_byte),
+        .received(uart_flag),
+        .rx_byte(rx_byte),
+        .is_receiving(),
+        .is_transmitting(),
+        .recv_error()
+        );
+
+    rot13 rot13_inst (
+        .clock(clock_12mhz),
+        .reset(reset),
+        .in_char(rx_byte),
+        .out_char(tx_byte)
+        );
+
     always @(posedge clock_12mhz) begin
         if (reset) begin
             throb_counter <= 0;
