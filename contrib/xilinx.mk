@@ -131,7 +131,7 @@ build/$(project).mcs: build/$(project).bit
 
 build/$(project).bit: build/$(project)_par.ncd build/$(project)_post_par.twr $(board).bitconf
 	@bash -c "$(xil_env); \
-	bitgen $(intstyle) -f ../$(board).bitconf -w $(project)_par.ncd $(project).bit"
+	bitgen $(intstyle) -f ../$(board).bitconf -w $(project)_par.ncd $(project).bit $(project).pcf"
 
 
 build/$(project)_par.ncd: build/$(project).ncd build/$(project)_post_map.twr
