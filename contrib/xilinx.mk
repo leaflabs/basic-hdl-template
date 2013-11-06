@@ -14,6 +14,7 @@
 #   libdir        path to library directory
 #   libs          library modules used
 #   verilog_files all local .v files
+#   vhdl_files    all local .vhd files
 #   xilinx_cores  all local .xco files
 #   vendor        vendor of FPGA (xilinx, altera, etc.)
 #   family        FPGA device family (spartan3e) 
@@ -156,15 +157,17 @@ build/$(project).ngd: build/$(project).ngc $(board).ucf $(board).bmm
 	@bash -c "$(xil_env); \
 	ngdbuild $(intstyle) $(project).ngc -bm ../$(board).bmm -sd ../cores -uc ../$(board).ucf -aul $(colorize)"
 
-build/$(project).ngc: $(verilog_files) $(local_corengcs) build/$(project).scr build/$(project).prj
+build/$(project).ngc: $(verilog_files) $(vhdl_files) $(local_corengcs) build/$(project).scr build/$(project).prj
 	@bash -c "rm build/$(project).scr; make build/$(project).scr"
 	@bash -c "$(xil_env); xst $(intstyle) -ifn $(project).scr $(colorize)"
 	@# need to check for success manually; TODO: doesn't work if pre-existed
 	@if [ ! -f build/$(project).ngc ]; then false; fi
 
-build/$(project).prj: $(verilog_files)
+build/$(project).prj: $(verilog_files) $(vhdl_files)
 	@for src in $(verilog_files); do echo "verilog work ../$$src" >> $(project).tmpprj; done
+	#@for src in $(vhdl_files); do echo "vhdl work ../$$src" >> $(project).tmpprj; done
 	@sort -u $(project).tmpprj > $@
+	@for src in $(vhdl_files); do echo "vhdl work ../$$src" >> $@; done
 	@rm -f $(project).tmpprj
 
 optfile += $(wildcard $(project).opt)
@@ -188,17 +191,23 @@ build/$(project)_post_par.twr: build/$(project)_par.ncd
 	@bash -c "$(xil_env); trce $(unconst_timing) -e $(const_timing_limit) -l $(const_timing_limit) $(project)_par.ncd $(project).pcf -o $(project)_post_par.twr $(colorize)"
 	@echo "See $@ for timing analysis details"
 
-tb/simulate_isim.prj: $(tbfiles) $(verilog_files)
+tb/simulate_isim.prj: $(tbfiles) $(verilog_files) $(vhdl_files) $(enc_vhdl_files)
 	@rm -f $@
 	@for f in $(verilog_files); do \
 		echo "verilog unenclib ../$$f" >> $@; \
+	done
+	@for f in $(vhdl_files); do \
+		echo "vhdl unenclib ../$$f" >> $@; \
+	done
+	@for f in $(enc_vhdl_files); do \
+		echo "vhdl enclib ../$$f" >> $@; \
 	done
 	@for f in $(tbfiles); do \
 		echo "verilog unenclib ../$$f" >> $@; \
 	done
 	@echo "verilog unenclib $(iseenv)/ISE/verilog/src/glbl.v" >> $@
 
-tb/isim.compiled: tb/simulate_isim.prj $(tbfiles) $(verilog_files)
+tb/isim.compiled: tb/simulate_isim.prj $(tbfiles) $(verilog_files) $(vhdl_files)
 	@bash -c "$(sim_env); cd ../tb/; vlogcomp -prj simulate_isim.prj $(colorize)"
 	@touch tb/isim.compiled
 
