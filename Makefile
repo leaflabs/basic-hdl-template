@@ -4,13 +4,23 @@ project := exampleproj
 top_module := main
 vendor := xilinx
 
-# This is the chipset for the Xess Xula 2 dev board
+# This is the chipset for the Avnet Zedboard
 board := zedboard
 family := zynq7000
 device := xc7z020
 speedgrade := -1
 device_package := clg484
 #extra_includes = ./contrib/zedboard.mk
+
+# This is the chipset for the Avnet Microzed, Zynq 7010 variant
+# There is a 7020 variant available as a SoM, but the 7010 is what the
+# "MicroZed Evaluation Kit" includes.
+#board := microzed
+#family := zynq7000
+#device := xc7z010
+#speedgrade := -1
+#device_package := clg400
+#extra_includes = ./contrib/microzed7010.mk
 
 part := $(device)$(speedgrade)-$(device_package)
 
