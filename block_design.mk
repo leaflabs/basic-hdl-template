@@ -7,6 +7,8 @@ verilog_files += hdl/block_design/ip/block_design_xbar_1/synth/block_design_xbar
 verilog_files += hdl/block_design/ip/block_design_processing_system7_0_0/synth/block_design_processing_system7_0_0.v
 verilog_files += hdl/block_design/ip/block_design_auto_pc_7/synth/block_design_auto_pc_7.v
 verilog_files += hdl/block_design/ip/block_design_xlconcat_0_0/synth/block_design_xlconcat_0_0.v
+vhdl_files += hdl/block_design/ip/block_design_proc_sys_reset_0/synth/block_design_proc_sys_reset_0.vhd
+vhdl_files += hdl/block_design/ip/block_design_axi_gpio_0_0/synth/block_design_axi_gpio_0_0.vhd
 vhdl_files += hdl/block_design/ip/block_design_axi_gpio_0_0/axi_gpio_v2_0/hdl/src/vhdl/axi_gpio.vhd
 vhdl_files += hdl/block_design/ip/block_design_axi_gpio_0_0/axi_gpio_v2_0/hdl/src/vhdl/gpio_core.vhd
 
