@@ -1,0 +1,3 @@
+-g Binary:yes
+-g DriveDone:yes
+-g StartupClk:Cclk
