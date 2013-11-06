@@ -11,6 +11,8 @@
 `timescale 1 ps / 1 ps
 
 module main (
+    input wire clock_100mhz,
+
     // Buttons, LEDs, Switches
     output wire [7:0] leds,
     input wire [7:0] switches,
@@ -46,7 +48,7 @@ module main (
     inout wire PS_CLK
     );
 
-    wire axi_aclk;
+    wire axi_aclk;  // This net is the PS's FCLK_CLK0; 100MHz
     wire [0:0] axi_aresetn;
     wire axi_interrupt1;
     wire [31:0] axi_slave1_araddr;
@@ -68,6 +70,38 @@ module main (
     wire [0:0] axi_slave1_wready;
     wire [3:0] axi_slave1_wstrb;
     wire [0:0] axi_slave1_wvalid;
+
+    reg throb_led_100mhz = 0;
+    reg [25:0] throb_counter_100mhz = 0;
+    always @(posedge clock_100mhz) begin
+        if (throb_counter_100mhz >= 26'd50_000_000) begin
+            throb_counter_100mhz <= 26'd0;
+            throb_led_100mhz <= ~throb_led_100mhz;
+        end else begin
+            throb_counter_100mhz <= throb_counter_100mhz + 26'd1;
+        end
+    end
+
+    reg throb_led_aclk = 0;
+    reg [25:0] throb_counter_aclk = 0;
+    always @(posedge axi_aclk) begin
+        if (throb_counter_aclk>= 26'd50_000_000) begin
+            throb_counter_aclk<= 26'd0;
+            throb_led_aclk <= ~throb_led_aclk;
+        end else begin
+            throb_counter_aclk <= throb_counter_aclk + 26'd1;
+        end
+    end
+
+    wire [7:0] axi_leds;
+    assign leds[0] = axi_leds[0];
+    assign leds[1] = axi_leds[1];
+    assign leds[2] = axi_leds[2];
+    assign leds[3] = axi_leds[3];
+    assign leds[4] = button_center;
+    assign leds[5] = switches[5];
+    assign leds[6] = throb_led_aclk;
+    assign leds[7] = throb_led_100mhz;
 
 block_design block_design_i
        (.DDR_addr(DDR_Addr),
@@ -98,7 +132,7 @@ block_design block_design_i
                                  button_left,
                                  button_right,
                                  button_up}),
-        .axi_gpio_leds_tri_o(leds),
+        .axi_gpio_leds_tri_o(axi_leds),
         .axi_interrupt1(axi_interrupt1),
         .axi_slave1_araddr(axi_slave1_araddr),
         .axi_slave1_arprot(axi_slave1_arprot),
