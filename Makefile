@@ -22,7 +22,6 @@ iseenv := /opt/Xilinx/14.7/ISE_DS/
 # list all .v files explicitly with verilog_files (no hdl/*.v business)
 verilog_files := hdl/$(top_module)_$(board).v
 verilog_files += hdl/rot13.v
-verilog_files += hdl/future.v
 verilog_files += hdl/axi_lite_slave.v
 #verilog_files += hdl/yours.v
 
