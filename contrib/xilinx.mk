@@ -55,6 +55,7 @@ xil_env ?= mkdir -p build/; cd ./build; source $(iseenvfile) > /dev/null
 sim_env ?= cd ./tb; source $(iseenvfile) > /dev/null
 flashsize ?= 8192
 mcs_datawidth ?= 16
+extra_prj ?=
 
 PWD := $(shell pwd)
 intstyle ?= -intstyle xflow
@@ -165,9 +166,9 @@ build/$(project).ngc: $(verilog_files) $(vhdl_files) $(local_corengcs) build/$(p
 
 build/$(project).prj: $(verilog_files) $(vhdl_files)
 	@for src in $(verilog_files); do echo "verilog work ../$$src" >> $(project).tmpprj; done
-	#@for src in $(vhdl_files); do echo "vhdl work ../$$src" >> $(project).tmpprj; done
+	@for src in $(vhdl_files); do echo "vhdl work ../$$src" >> $(project).tmpprj; done
+	@for stub in $(extra_prj); do cat $$stub >> $(project).tmpprj; done
 	@sort -u $(project).tmpprj > $@
-	@for src in $(vhdl_files); do echo "vhdl work ../$$src" >> $@; done
 	@rm -f $(project).tmpprj
 
 optfile += $(wildcard $(project).opt)
