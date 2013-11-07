@@ -10,7 +10,8 @@ family := zynq7000
 device := xc7z020
 speedgrade := -1
 device_package := clg484
-#extra_includes = ./contrib/zedboard.mk
+zynq_ssh_host := root@zedboard	# SSH target; could also be user@1.2.3.4
+extra_includes += ./contrib/zynq.mk
 
 # This is the chipset for the Avnet Microzed, Zynq 7010 variant
 # There is a 7020 variant available as a SoM, but the 7010 is what the
@@ -20,7 +21,7 @@ device_package := clg484
 #device := xc7z010
 #speedgrade := -1
 #device_package := clg400
-#extra_includes = ./contrib/microzed7010.mk
+#extra_includes += ./contrib/zynq.mk
 
 part := $(device)$(speedgrade)-$(device_package)
 

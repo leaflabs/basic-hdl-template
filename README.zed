@@ -1,0 +1,57 @@
+
+For some reason, 'impact' doesn't work via the usual Makefile target.
+
+Instead, do 'xilinxenv147' then 'impact'. TODO: extensive notes on setting up
+Digilent cable drivers etc.
+
+### HOWTO: Load via JTAG
+
+After a cold reboot, boot the PS entirely, then use impact to load a bitfile to
+the FPGA fabric. Ensure that the AXI clock is working before attempting memory
+reads/writes.
+
+### Memory Map and Interrupts
+
+Dual AXI GPIO
+    0x41200000, 4k long
+    Interrupt 0
+    Read buttons from the low 5 bits of 0x41200000
+        (will be 0x0 unless buttons are pressed)
+    Write LEDs to the low 4 bits of 0x41200008
+    See page 10 of Xilinx DS744 for details about interrupts
+
+Generic AXI Slave
+    0x70000000, 128k long
+    Interrupt 1
+
+### Board Setup
+
+http://www.wiki.xilinx.com/Ubuntu+on+Zynq
+
+By default the above image is configured for the Zc702 dev board. Need to grab
+a new devicetree.dtb, System.map, uImage, boot.bin etc for the zedboard from:
+
+http://www.wiki.xilinx.com/Zynq+Releases
+
+After boot needed to:
+    cd /lib/modules
+    ln -s 3.8.0-xilinx-00015-gabc285b/ 3.8.0-xilinx
+
+    apt-get install bzip2
+    apt-get update
+
+### HOWTO: Load via /dev/xdevcfg
+
+Quick and easy, 'make remote_xdevcfg' to copy a bitfile to a Zynq system over
+SSH and then program the PL using the /dev/xdevcfg mechanism.
+
+To manually load a .bit.bin file (sometimes the xdevcfg character device needs
+to be created first):
+
+    mknod /dev/xdevcfg c 259 0
+    cat system.bit.bin > /dev/xdevcfg
+
+The ".bit.bin" files are distinct from both .bit files and .bin files. See
+this Xilinx support solution for details:
+
+  http://www.xilinx.com/support/answers/46913.html
