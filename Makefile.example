@@ -1,0 +1,99 @@
+# If this file is named ./Makefile.example, move it to ./Makefile and edit it.
+
+### Project-specific Makefile
+
+project := exampleproj
+top_module := main
+vendor := xilinx
+
+### Uncomment this line to use the Xilinx SP605 dev board with default
+### configuration
+#include ./contrib/sp605/sp605.mk
+
+### Uncomment this line to use the Xula2 dev board with default configuration
+### See also ./contrib/xula2/README.xula2
+include ./contrib/xula2/xula2.mk
+
+### Edit and uncomment the below lines to use a custom board
+#board := exampleboard
+#family := spartan6
+#device := XC6SLX25
+#speedgrade := -2
+#device_package := ftg256
+#ucf_file := exampleboard.ucf
+#bitconf_file := contrib/default.bitconf
+#opt_file := contrib/default.opt
+
+### Uncomment this line and create a new makefile to include any
+### hardware-specific targets (eg, upload via SPI)
+#extra_includes = exampleproj.mk
+
+part := $(device)$(speedgrade)-$(device_package)
+
+### Is this build host 64 or 32 bits?
+hostbits := 64
+
+### Point to the Xilinx ISE toolchain directory here
+iseenv := /opt/Xilinx/14.3/ISE_DS/
+
+### List all Verilog (.v) files for this project explicitly below.
+### Leave blank if you only have VHDL files.
+### Use one file per line; do not use wildcards (eg, hdl/*.v).
+verilog_files += hdl/$(top_module)_$(board).v
+verilog_files += hdl/rot13.v
+verilog_files += hdl/simple_uart.v
+
+### List all VHDL (.vhd) files for this project in the top-level namespaces
+### below. VHDL files which are in a library-specific namespace need to be
+### included via a seperate .prj stub file for now.
+### Leave blank if you only have Verilog files.
+### Use one file per line; do not use wildcards (eg, hdl/*.v).
+vhdl_files +=
+
+extra_prj +=
+
+### List all testbench Verilog (.v) files below.
+### See contrib/README.testbenches for details.
+### VHDL testbenches are not yet supported.
+tbfiles += tb/rot13_tb.v
+tbfiles += tb/xula2_tb.v
+
+### List all test/*_tb targets which should be executed by the "make tests"
+### target.
+alltests := test/rot13_tb
+
+### Verilog parameters can be passed to the top-level module.
+### Syntax is:        vgenerics += "PARAM_NAME=123"
+### For hex numbers:  vgenerics += "HEX_PARAM=hAB12"
+### Note that the Verilog parameter *must* be defined in the top-level module
+### or a build error will result.
+vgenerics += 
+
+### Example vgeneric usage which passes the git commit and current unix time as
+### parameters.
+#gitcommit = $(shell (git log --abbrev=8 --oneline -n 1 2> /dev/null || echo "00000000") | head -c 8)
+#build_unixtime = $(shell date +%s || echo "0")
+#vgenerics += "GIT_COMMIT=h$(gitcommit)"
+#vgenerics += "BUILD_UNIX_TIME=d$(build_unixtime)"
+
+### List all Xilinx Coregen .xco files (eg, "cores/bram.xco") below. Verilog and
+### netlist files will be generated and included automatically.
+### Not all cores should be included this way; eg, clk_wiz_* (clock mangement
+### files) should go in verilog_files instead.
+### See ./contrib/HOWTO_coregen for details.
+xilinx_cores += 
+
+### Edit this line to change the bitwidth of .mcs bitfiles generated for
+### uploading to flash memories
+#mcs_datawidth := 8
+
+### BMM files specify the default BRAM FPGA memory contents.
+### Edit this line to specify a non-empty file for use with your project.
+bmm_file := contrib/empty.bmm
+
+### The bulk of the actual Xilinx-oriented build system is in a different file
+include ./contrib/xilinx.mk
+
+### Include any last extra board- or project-specific build targets
+include $(extra_includes)
+
