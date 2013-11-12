@@ -33,6 +33,9 @@ verilog_files += hdl/rot13.v
 verilog_files += hdl/simple_uart.v
 #verilog_files += hdl/yours.v
 
+# all .vhd files explicitly also
+vhdl_files :=
+
 tbfiles := tb/rot13_tb.v
 tbfiles += tb/xula2_tb.v
 #tbfiles += tb/sp605_tb.v
