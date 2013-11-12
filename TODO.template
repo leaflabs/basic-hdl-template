@@ -7,6 +7,8 @@ BUG: synth still seems to continue even if first build (verilog compile)
 
 add .PRECIOUS for intermediate files we don't want to get deleted
 
+'lint' should use vfiles, not -I./hdl
+
 for fpga_editor:
     DISPLAY=`echo $DISPLAY |sed s/'\.0'//` fpga_editor <.ncd file>
 
