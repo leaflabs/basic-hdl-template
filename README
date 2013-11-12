@@ -1,5 +1,5 @@
 
-* * < DELTEME > * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+* * * DELETE ME * * * * * * * DELETE ME * * * * * * * DELETE ME * * * * * * * *
 
 This folder contains a template Verilog/VHDL HDL project with a basic build
 system for using the Xilinx ISE toolchain to target FPGAs.                  
@@ -10,11 +10,15 @@ minimum you will need to copy ./contrib/Makefile.example to ./Makefile.
                                                                             
 Hint: search this file for "<board>"                                        
 
-* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+^ ^ ^ DELETE ME ^ ^ ^ ^ ^ ^ ^ DELETE ME ^ ^ ^ ^ ^ ^ ^ DELETE ME ^ ^ ^ ^ ^ ^ ^ ^
 
 == About =====================================================================
 
-<fill this part in>
+
+
+  <<<<fill this part in>>>>
+
+
 
 See COPYING for copyright and licensing information.
 
