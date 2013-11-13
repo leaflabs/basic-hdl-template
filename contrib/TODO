@@ -1,36 +1,7 @@
 
-rename repo...
-    hdl-build
-    basic-hdl-project
+rename repo "basic-hdl-project"
 
-cleanup simple_uart.v
-
-BUG: synth still seems to continue even if first build (verilog compile) fails
-
-requests from AJ:
-    anything related to not rebuilding all the coregen when not necessary.
-
-    e.g. want a make clean equivalent to removing the build dir but not the
-    cores. This should actually be the default behavior, with different
-    operator for nixing the cores.
-
-    not auto rebuilding the cores when switching branches/commits if not
-    strictly necessary. Because git touches all the files, this may be
-    difficult.
-
-    make isim/simulate will run to completion even if there were errors on
-    the build.
-
-    In the case of make isim, isim will load and run the previously valid
-    simulation. Unless you happen to see the error go by in the build log,
-    you will unknowingly be simulating your previous build, whereas your
-    current build failed to compile.
-
-    The solution is to have make simulate begin by deleting the previous
-    simulation executable, so that it must successfully create a new one
-    before loading isim.
-
---- later...
+cleanup simple_uart.v (remove warnings)
 
 effort levels seem high by default:
     Overall effort level (-ol):   High 
