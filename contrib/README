@@ -1,4 +1,18 @@
 
+### Notes
+
+By default, re-synthesis of a project (eg, after making a change to any HDL
+files) will attempt to use the previous place-and-route netlist as a starting
+point via the "smartguide" mechanism. 'make mostlyclean' will prevent this.
+
+Changes to Makefiles will *not* necessarily result in a full rebuild; the
+makefiles themselves are not a prerequisite of any targets. It is *strongly*
+recommended that you 'make clean' (not just 'mostlyclean') after any
+significant modifications to project settings, particularly changes to the
+target part number.
+
+### Make Targets
+
 make bitfiles       - synths bitfiles and copies to ./bitfiles/ (DEFAULT)
 make synth          - compiles and synthesizes bitfiles (no copying)
 make tests          - runs all unittests
