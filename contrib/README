@@ -44,4 +44,4 @@ make ise        - launches Xilinx IDE GUI (no project selected)
 make impact     - launches Xilinx JTAG program GUI (no bitfile)
 make ldimpact   - launches JTAG GUI with libusb libraries selected (Linux)
 make timingan   - launches Xilinx timing analysis GUI
-
+make xreport    - launches Xilinx log/warning browser
