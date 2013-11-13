@@ -29,9 +29,10 @@ make clean          - cleans all sim and synth files, incl. coregen'd
 
 make untouchcores   - reset timestamps on .xco files to last change
 
-make isim/<name>_tb   - compiles sim files, then launches simulator GUI
-make resim/<name>_tb  - recompiles sim files w/o launching GUI
-make test/<name>_tb   - runs a single unit test
+make isim/<name>_tb    - compiles sim files, then launches simulator GUI
+make isimcli/<name>_tb - compiles sim files, then launches simulator CLI
+make resim/<name>_tb   - recompiles sim files w/o launching GUI
+make test/<name>_tb    - runs a single unit test
 
 make par_timingan     - launches timing GUI with most recent build results
 make par_fpga_editor  - launches FPGA visualizer GUI for last build (slow!)

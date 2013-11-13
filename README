@@ -86,7 +86,7 @@ first time, be sure to save and rename the configuration appropriately.
 
 After editing any HDL files (either the testbench itself or files in ./hdl/),
 instead of restarting isim you can simply run the following command and then
-hit the "Reload" button in the isim GUI:
+hit the "Re-launch" button in the isim GUI:
 
     make resim/<testbench>_tb
 
