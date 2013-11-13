@@ -8,11 +8,12 @@ vendor := xilinx
 
 ### Uncomment this line to use the Xilinx SP605 dev board with default
 ### configuration
-#include ./contrib/sp605/sp605.mk
+#include ./contrib/sp605/settings.mk
 
-### Uncomment this line to use the Xula2 dev board with default configuration
+### Uncomment these lines to use the Xula2 dev board with default configuration
 ### See also ./contrib/xula2/README.xula2
-include ./contrib/xula2/xula2.mk
+include ./contrib/xula2/settings.mk
+extra_includes += ./contrib/xula2/targets.mk
 
 ### Edit and uncomment the below lines to use a custom board
 #board := exampleboard
@@ -26,7 +27,7 @@ include ./contrib/xula2/xula2.mk
 
 ### Uncomment this line and create a new makefile to include any
 ### hardware-specific targets (eg, upload via SPI)
-#extra_includes = exampleproj.mk
+#extra_includes += exampleproj.mk
 
 part := $(device)$(speedgrade)-$(device_package)
 

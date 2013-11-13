@@ -1,15 +1,7 @@
-# xula2 device-specific configuration variables and make targets
+# xula2 device-specific configuration make targets.
+# put variables in settings.mk, not this file.
 
 .PHONY: prog prog_flash
-
-board := xula2
-family := spartan6
-device := XC6SLX25
-speedgrade := -2
-device_package := ftg256
-bitconf_file := ./contrib/xula2/xula2.bitconf
-ucf_file := ./contrib/xula2/xula2.ucf
-opt_file := ./contrib/default.opt
 
 # This target uploads directly to the FPGA; volatile
 prog: build/$(project).bit

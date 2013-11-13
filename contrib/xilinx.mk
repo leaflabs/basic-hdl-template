@@ -50,9 +50,10 @@
 # "PRECIOUS" files will not be deleted by make as casually
 .PRECIOUS: tb/%.isim
 
-.DEFAULT_GOAL: default
+# Setup default targets
 default: bitfiles
-all: bitfiles
+all: default
+.DEFAULT_GOAL: default
 
 # This file only works with Xilinx stuff
 vendor = xilinx
