@@ -349,14 +349,24 @@ final_timing: build/$(project)_post_par.twr
 lint:
 	verilator --lint-only -I./hdl -I./cores -Wall -Wno-DECLFILENAME hdl/$(top_module)_$(board) || true
 
-clean: clean_synth clean_sim
+cleanall: clean_synth clean_sim clean_ise
+	rm -rf coregen-tmp
+
+clean: clean_synth clean_sim clean_ise
+
+clean_ise:
 	rm -rf iseconfig
 
 clean_sim::
-	rm -f tb/simulate_isim tb/*.log tb/*.cmd tb/*.xmsgs tb/*.prj tb/*.isim tb/isim.compiled
+	rm -f tb/simulate_isim
+	rm -f tb/*.log
+	rm -f tb/*.cmd
+	rm -f tb/*.xmsgs
+	rm -f tb/*.prj
+	rm -f tb/*.isim
+	rm -f tb/isim.compiled
 	rm -rf tb/isim
 
 clean_synth::
 	rm -rf build
-	rm -rf coregen-tmp
 
