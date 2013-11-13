@@ -330,14 +330,14 @@ planahead:
 # DISPLAY variable (X Windows) should be inherited from environment
 DISPLAY ?= :0
 
-partial_fpga_editor: build/$(project).ncd
+map_fpga_editor: build/$(project).ncd
 	@echo "Starting fpga_editor in the background (can take a minute or two)..."
 	@echo "IGNORE the RPC errors below."
 	@echo
 	@bash -c "$(xil_env); \
 		DISPLAY=`echo $(DISPLAY) | sed s/'\.0'//` fpga_editor $(project).ncd &"
 
-final_fpga_editor: build/$(project)_par.ncd
+par_fpga_editor: build/$(project)_par.ncd
 	@echo "Starting fpga_editor in the background (can take a minute or two)..."
 	@echo "IGNORE the RPC errors below."
 	@echo
@@ -348,26 +348,26 @@ timingan:
 	@bash -c "$(xil_env); \
 		timingan &"
 
-partial_timing: build/$(project)_post_map.twr
+map_timingan: build/$(project)_post_map.twr
 	@bash -c "$(xil_env); \
 		timingan -ucf ../$(ucf_file) $(project).ncd $(project).pcf $(project)_post_map.twx &"
 
-final_timing: build/$(project)_post_par.twr
+par_timingan: build/$(project)_post_par.twr
 	@bash -c "$(xil_env); \
 		timingan -ucf ../$(ucf_file) $(project)_par.ncd $(project).pcf $(project)_post_par.twx &"
 
 lint:
 	verilator --lint-only -I./hdl -I./cores -Wall -Wno-DECLFILENAME hdl/$(top_module)_$(board) || true
 
-cleanall: clean_synth clean_sim clean_ise
+clean: clean_synth clean_sim clean_ise
 	rm -rf coregen-tmp
 
-clean: clean_synth clean_sim clean_ise
+mostlyclean: clean_synth clean_sim clean_ise
 
 clean_ise:
 	rm -rf iseconfig
 
-clean_sim::
+clean_sim:
 	rm -f tb/simulate_isim
 	rm -f tb/*.log
 	rm -f tb/*.cmd
@@ -377,6 +377,6 @@ clean_sim::
 	rm -f tb/isim.compiled
 	rm -rf tb/isim
 
-clean_synth::
+clean_synth:
 	rm -rf build
 
