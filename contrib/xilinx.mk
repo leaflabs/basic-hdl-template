@@ -157,9 +157,9 @@ bitfiles: build/$(project).bit build/$(project).mcs
 	@for x in .bit .mcs .cfi _par.ncd _post_par.twr _post_par.twx; do \
 		cp build/$(project)$$x $@/$(timestamp)/$(project)$$x || true; \
 		cp build/$(project)$$x $@/latest/$(project)$$x || true; \
-	done
-	@cp -R build/$(project)/__xmsgs $@/$(timestamp)/$(project)/logs || true; \
-	@cp -R build/$(project)/__xmsgs $@/latest/$(project)/logs || true; \
+	done;
+	@cp -R build/_xmsgs $@/$(timestamp)/logs || true;
+	@cp -R build/_xmsgs $@/latest/logs || true;
 	@bash -c "$(xil_env); \
 		cd ..; \
 		xst -help | head -1 | sed 's/^/#/' | cat - build/$(project).scr > $@/$(timestamp)/$(project).scr"
