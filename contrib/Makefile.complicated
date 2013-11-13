@@ -1,0 +1,42 @@
+# This makefile is helpful for build system development because it exersizes
+# more features (eg, coregen stuff).
+# You may wish to symlink it from the top-level Makefile
+
+project := complicatedproj
+top_module := complicated
+vendor := xilinx
+
+include ./contrib/xula2/settings.mk
+extra_includes += ./contrib/xula2/targets.mk
+
+part := $(device)$(speedgrade)-$(device_package)
+
+hostbits := 64
+
+iseenv := /opt/Xilinx/14.3/ISE_DS/
+#iseenv := /opt/Xilinx/14.7/ISE_DS/
+
+verilog_files += hdl/complicated.v
+verilog_files += hdl/rot13.v
+
+vhdl_files +=
+
+extra_prj +=
+
+tbfiles += tb/rot13_tb.v
+
+gitcommit = $(shell (git log --abbrev=8 --oneline -n 1 2> /dev/null || echo "00000000") | head -c 8)
+build_unixtime = $(shell date +%s || echo "0")
+vgenerics += "GIT_COMMIT=h$(gitcommit)"
+vgenerics += "BUILD_UNIX_TIME=d$(build_unixtime)"
+
+xilinx_cores += cores/bram.xco
+
+mcs_datawidth := 32
+
+bmm_file := contrib/empty.bmm
+
+include ./contrib/xilinx.mk
+
+include $(extra_includes)
+
