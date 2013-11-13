@@ -1,7 +1,11 @@
 
-BUG: synth still seems to continue even if first build (verilog compile) fails
+rename repo...
+    hdl-build
+    basic-hdl-project
 
-For bitfile/mcs targets, add an echo that they are being created (slow).
+cleanup simple_uart.v
+
+BUG: synth still seems to continue even if first build (verilog compile) fails
 
 requests from AJ:
     anything related to not rebuilding all the coregen when not necessary.
