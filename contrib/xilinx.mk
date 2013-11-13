@@ -45,15 +45,15 @@
 # These dot-targets must come first in the file
 .PHONY: default xilinx_cores clean twr_map twr_par ise isim simulate coregen \
 	impact ldimpact lint planahead partial_fpga_editor final_fpga_editor \
-	partial_timing final_timing tests all
+	partial_timing final_timing tests all bit mcs
 
 # "PRECIOUS" files will not be deleted by make as casually
 .PRECIOUS: tb/%.isim
 
 # Setup default targets
 default: bitfiles
-all: default
-.DEFAULT_GOAL: default
+all: bitfiles
+.DEFAULT_GOAL: bitfiles
 
 # This file only works with Xilinx stuff
 vendor = xilinx
@@ -111,8 +111,12 @@ $(2): $(1)
 endef
 $(foreach ngc,$(corengcs),$(eval $(call cp_template,$(ngc),$(notdir $(ngc)))))
 
+# Aliases
 twr_map: build/$(project)_post_map.twr
 twr_par: build/$(project)_post_par.twr
+bit: build/$(project).bit
+mcs: build/$(project).mcs
+synth: build/$(project).bit
 
 $(coregen_work_dir)/$(project).cgp: contrib/template.cgp
 	@if [ -d $(coregen_work_dir) ]; then \
@@ -143,16 +147,19 @@ $(coregen_work_dir)/$(project).cgp: contrib/template.cgp
 		cp $(coregen_work_dir)/$$basename.v $(coregen_work_dir)/$$basename.ngc $$xcodir; \
 	fi
 
+
 timestamp = $(shell date +%F-%H%M)
 
 bitfiles: build/$(project).bit build/$(project).mcs
-	@mkdir -p $@/$(timestamp)
-	@mkdir -p $@/latest
+	@mkdir -p $@/$(timestamp)/logs
+	@mkdir -p $@/latest/logs
 	@# NB: _bd.bmm was listed below in the past...
 	@for x in .bit .mcs .cfi _par.ncd _post_par.twr _post_par.twx; do \
 		cp build/$(project)$$x $@/$(timestamp)/$(project)$$x || true; \
 		cp build/$(project)$$x $@/latest/$(project)$$x || true; \
 	done
+	@cp -R build/$(project)/__xmsgs $@/$(timestamp)/$(project)/logs || true; \
+	@cp -R build/$(project)/__xmsgs $@/latest/$(project)/logs || true; \
 	@bash -c "$(xil_env); \
 		cd ..; \
 		xst -help | head -1 | sed 's/^/#/' | cat - build/$(project).scr > $@/$(timestamp)/$(project).scr"
@@ -358,6 +365,11 @@ par_timingan: build/$(project)_post_par.twr
 
 lint:
 	verilator --lint-only -I./hdl -I./cores -Wall -Wno-DECLFILENAME hdl/$(top_module)_$(board) || true
+
+help:
+	@cat ./contrib/README
+	@echo
+	@echo "See README for general help"
 
 clean: clean_synth clean_sim clean_ise
 	rm -rf coregen-tmp
