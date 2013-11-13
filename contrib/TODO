@@ -1,23 +1,7 @@
 
-switch to .EXPORT_ALL_VARIABLES and/or .ONESHELL (as a refactor/cleanup)?
-    or is that too gmake specific...
+BUG: synth still seems to continue even if first build (verilog compile) fails
 
-BUG: synth still seems to continue even if first build (verilog compile)
-     fails
-
-add .PRECIOUS for intermediate files we don't want to get deleted
-
-'lint' should use vfiles, not -I./hdl
-
-for fpga_editor:
-    DISPLAY=`echo $DISPLAY |sed s/'\.0'//` fpga_editor <.ncd file>
-
-effort levels seem high by default:
-    Overall effort level (-ol):   High 
-    Router effort level (-rl):    High 
-
-impact:
-    impact -mode bscan -b build/sp605.bit -port auto -autoassign (needs testing)
+For bitfile/mcs targets, add an echo that they are being created (slow).
 
 requests from AJ:
     anything related to not rebuilding all the coregen when not necessary.
@@ -42,4 +26,18 @@ requests from AJ:
     simulation executable, so that it must successfully create a new one
     before loading isim.
 
+--- later...
+
+effort levels seem high by default:
+    Overall effort level (-ol):   High 
+    Router effort level (-rl):    High 
+    -> 'make quicksynth' ?
+
+add support for post-synthesis simulation
+
+autoimpact (needs testing)
+    impact -mode bscan -b build/sp605.bit -port auto -autoassign (needs testing)
+
 Add linting to tests (aka, tb/*_tb.v)
+
+'lint' should use vfiles, not -I./hdl
