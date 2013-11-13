@@ -165,11 +165,13 @@ bitfiles: build/$(project).bit build/$(project).mcs
 		xst -help | head -1 | sed 's/^/#/' | cat - build/$(project).scr > $@/$(timestamp)/$(project).scr"
 
 build/$(project).mcs: build/$(project).bit
+	@echo "Generating $@..."
 	@bash -c "$(xil_env); \
 		promgen -w -data_width $(mcs_datawidth) -s $(flashsize) -p mcs -o $(project).mcs \
 		        -u 0 $(project).bit"
 
 build/$(project).bit: build/$(project)_par.ncd build/$(project)_post_par.twr $(bitconf_file)
+	@echo "Generating $@..."
 	@bash -c "$(xil_env); \
 		bitgen $(intstyle) -f ../$(bitconf_file) -w $(project)_par.ncd $(project).bit \
 		       $(project).pcf"
