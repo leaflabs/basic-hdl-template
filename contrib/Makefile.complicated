@@ -16,7 +16,7 @@ hostbits := 64
 iseenv := /opt/Xilinx/14.3/ISE_DS/
 #iseenv := /opt/Xilinx/14.7/ISE_DS/
 
-verilog_files += hdl/complicated.v
+verilog_files += contrib/complicated.v
 verilog_files += hdl/rot13.v
 
 vhdl_files +=
