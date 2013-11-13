@@ -79,11 +79,9 @@ module main (
     assign flash_sclk = 1'bZ;
     assign flash_mosi = 1'bZ;
     assign flash_miso = 1'bZ;
-    assign chan[31] = 1'bz;
-/*
-    assign chan[31:21] = 11'bZ;
-    assign chan[19:1] = 19'bZ;
-    assign chan_clk = 1'bZ;
-*/
+
+    // Squelch unused input warnings
+    (* KEEP="TRUE" *) wire dummy;
+    assign dummy =& {chan[31:0], chan_clk};
 
 endmodule
