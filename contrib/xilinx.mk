@@ -132,6 +132,10 @@ $(coregen_work_dir)/$(project).cgp: contrib/template.cgp
 	@echo "SET speedgrade = $(speedgrade)" >> $@
 	@echo "SET workingdirectory = ./tmp/" >> $@
 
+untouchcores:
+	@echo "Resetting .xco timestamps so that cores won't be rebuilt"
+	./contrib/git_untouch.sh $(xilinx_cores)
+
 %.ngc %.v: %.xco $(coregen_work_dir)/$(project).cgp
 	@echo "=== rebuilding $@"
 	@bash -c "$(xil_env); \

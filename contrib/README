@@ -5,6 +5,13 @@ By default, re-synthesis of a project (eg, after making a change to any HDL
 files) will attempt to use the previous place-and-route netlist as a starting
 point via the "smartguide" mechanism. 'make mostlyclean' will prevent this.
 
+By default, a git checkout will update timestamps on all files under version
+control. There are good reasons for this, but it can be particularly
+frustrating when there are large coregen cores in a project which must be
+rebuilt from scratch, even is the .xco files were not touched. The
+'untouchcores' target will try to cleverly reset timestamps to prevent this;
+run it after a git pull or checkout.
+
 Changes to Makefiles will *not* necessarily result in a full rebuild; the
 makefiles themselves are not a prerequisite of any targets. It is *strongly*
 recommended that you 'make clean' (not just 'mostlyclean') after any
@@ -19,6 +26,8 @@ make tests          - runs all unittests
 make lint           - runs lint program on synthesizable Verilog files
 make mostlyclean    - cleans most sim and synth files
 make clean          - cleans all sim and synth files, incl. coregen'd
+
+make untouchcores   - reset timestamps on .xco files to last change
 
 make isim/<name>_tb   - compiles sim files, then launches simulator GUI
 make resim/<name>_tb  - recompiles sim files w/o launching GUI
