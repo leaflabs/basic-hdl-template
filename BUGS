@@ -1,2 +1,0 @@
-For some reason ./tb/isim.sdb can swell to 8GB or more.
-'lint' should use vfiles, not -I./hdl

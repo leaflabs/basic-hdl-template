@@ -1,0 +1,57 @@
+#!/usr/bin/env sh
+
+# Note: you can either follow the directions in this file, or just run it like:
+#
+#   sh ./contrib/QUICK_START.txt
+#
+# Make sure we are where we think we are; eg don't run this from the ./contrib
+# folder. Also, fail hard.
+set -e
+test -f ./contrib/QUICK_START.txt
+
+###############################################################################
+############## The Verilog Build Project Template Quick Start! ################
+###############################################################################
+
+# Move Makefile.example to Makefile and edit it. At least set a project name
+# and chose a board.
+# If you are using a board for which there does not (yet) exist a template in
+# ./contrib, you'll need to create a ./<boardname>.ucf file, and possibly also
+# ./<boardname>.opt and ./<boardname>.bitconf files as well.
+
+  git mv Makefile.example Makefile
+  $EDITOR Makefile
+
+# Edit the README file with project-specific info; include a snazzy title by
+# default if possible.
+
+  if [ -x /usr/bin/figlet ]; then
+      echo "Enter the project title (up to ~32 char), then press enter, then Ctrl-D"
+      figlet > README.new && cat README >> README.new && mv README.new README
+  fi
+  $EDITOR README
+
+# Edit the COPYING file with license information
+
+  $EDITOR COPYING
+
+# Change the 'origin' git remote to point to a new remote repository. Don't
+# accidentially push to the 'verilog-build' template repo!
+
+  $EDITOR .git/config
+
+# Add any hdl files to git
+
+  git add hdl/*.v hdl/*.vhd tb/*.v 2> /dev/null || true
+
+# Add any project-specific files to git (if there are any)
+
+  git add *.opt *.bmm *.ucf 2> /dev/null || true
+
+# Commit all that!
+
+  git commit -e -m "Starting new project using verilog-build template"
+
+echo "Alright, good to go."
+echo
+echo "NOTE: If you didn't get a chance to add any files you wanted in the initial commit, you can still add them now (with 'git add') and then update the most recent commit with 'git commit --amend'."

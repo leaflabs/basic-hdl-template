@@ -1,5 +1,11 @@
 #!/bin/bash
 
+# Author: AJ Meyer
+# Date: August 2013
+
+# This script can be used to sequentially build many bitfiles across a range of
+# git commits. This is helpful for doing a binary search for functional or
+# build errors introduced at an unknown time.
 
 echo "Usage: $0 GIT-RANGE  (e.g. $0 97de5..HEAD)"
 COMMITS=$(git log --oneline $1 | awk '{print $1;}')

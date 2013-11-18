@@ -1,31 +1,52 @@
 
-A very basic project template for Verilog simulation and synthesis using Isim
-and Xilinx tools. 
+* * * DELETE ME * * * * * * * DELETE ME * * * * * * * DELETE ME * * * * * * * *
 
-Contents:
+This folder contains a template Verilog/VHDL HDL project with a basic build
+system for using the Xilinx ISE toolchain to target FPGAs.                  
+                                                                            
+When using this as a project template, edit this file and then delete this
+section. See ./contrib/QUICK_START.txt for help setting up a new project. At a
+minimum you will need to copy ./contrib/Makefile.example to ./Makefile.     
+                                                                            
+Hint: search this file for "<board>"                                        
+
+^ ^ ^ DELETE ME ^ ^ ^ ^ ^ ^ ^ DELETE ME ^ ^ ^ ^ ^ ^ ^ DELETE ME ^ ^ ^ ^ ^ ^ ^ ^
+
+== About =====================================================================
+
+
+
+  <<<<fill this part in>>>>
+
+
+
+See COPYING for copyright and licensing information.
+
+This folder contains Verilog/VHDL source code and a build system based on the
+no-cost Xilinx ISE WebPack toolchain for simulating and synthesizing targeting
+FPGAs.
+
+== Repository Contents =======================================================
 
   hdl/
-    Verilog Code
+    Synthesizable Verilog and VHDL source code
 
   tb/
-    "testbench" simulation code
+    Testbench simulation source code, unit tests, related data and scripts
 
   docs/
-    documentation
+    Documentation might live here
 
   contrib/
     Project-independent build scripts are set here
 
   backup/
-    A handful of old "known-good" bitfiles can get archived here.
-
-  sngdaq.ucf
-    Wired Leaf pinout definition file
+    A handful of old "known-good" bitfiles might get archived here.
 
   Makefile
     Project-specific build variables are set here
 
-== HOWTO Build a Bitfile =====================================================
+== Synthesis =================================================================
 
 The Xilinx ISE development must be installed and licensed on the local machine.
 A set of command-line build scripts are usually used to build the project
@@ -33,55 +54,54 @@ instead of the ISE IDE, but the later could be configured and used as well.
 
 Python and GNU make must be on the $PATH.
 
-Build a bitstream (to upload to an FPGA, preconfigured as Spartan 6 chip in
-Makefile) via:
+Synthesize a bitfile with:
 
     make
 
+To upload the bitfile over JTAG using the Xilinx Impact utility, run the
+command below. There may be other upload board-specific upload mechanisms; look
+elsewhere in this file or for a README in ./contrib/<board>.
+
 The toplevel ucf (constraints mapping netlist objects from the verilog
 compilation to hardware resources, and place and routing and timing
-constraints) is:
+constraints) will either be a .ucf file in this top directory, or, if a board
+template was used, might live in ./contrib/<board>/<board>.ucf.
 
-    ./sngdaq.ucf
+The toplevel verilog module, which probably does nothing (just sets some pins
+to zero) lives in:
 
-The toplevel verilog module, which does nothing (just sets some pins to zero)
-lives in:
+    ./hdl/main_<board>.v
 
-    ./hdl/sngdaq.v
+To load a synthesized bitfile, 
 
-To edit the project with the ISE GUI, try:
+== Simulation ================================================================
 
-    make ise
+To simulate the testbench in ./tb/<testbench>_tb with the isim GUI:
 
-WARNING: the ISE configuration options may or may not be synchronized with the
-command line build options. Edit the options in project.opt and build only from
-the command line to be safe.
+    make isim/<testbench>_tb
 
-Simulate with isim via:
+A "tb/<testbench>_tb.wcfg" may be missing for new testbenches, which isim will
+complain about. After you set up your waveform configuration in isim for the
+first time, be sure to save and rename the configuration appropriately.
 
-    make simulate
+After editing any HDL files (either the testbench itself or files in ./hdl/),
+instead of restarting isim you can simply run the following command and then
+hit the "Re-launch" button in the isim GUI:
 
-View the results using the isim GUI with:
+    make resim/<testbench>_tb
 
-    make isim
+Some testbenches may be written in a particular style and can be run as
+automated tests. To run a particular test, or to run all unit tests:
 
-In isim, you can open the "signals.wcfg" in the file menu to reload a the logic
-analyzer configuration. This cfg file will not be valid if you delete any
-signals from your design that are saves in the wcfg.
+    make test/<testname>_tb
+    make tests
 
-./testbench/tb.v  is the toplevel testbench file for simulation.
+== Development ===============================================================
 
-Please improve and push!
+This project uses a template HDL build system. You can read more about
+developing with this system in the HOWTO and README files in the ./contrib/
+directory. In particular, there are directions on:
 
-== HOWTO Coregen =============================================================
+ - using Xilinx Coregen to instantiate HDL cores
+ - creating unittest-style testbenches
 
-Run `make coregen` and use the GUI to generate a core.
-
-Depending on the output, copy .v files to hdl/ and/or .xco files to cores/.
-update the Makefile.
-
-For any .xco files, strip the "Project Options" section and the final CRC line.
-
-After making any changes to the target chipset (eg, by modifying Makefile),
-you'll need to do a 'make clean' to ensure that the coregen logic is
-resynthesized correctly.

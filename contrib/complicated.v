@@ -1,18 +1,18 @@
 /*
- * main_xula2.v
+ * complicated.v
  *
  * Copyright: (C) 2013 LeafLabs, LLC
  * License: MIT License (See LICENSE file)
  * Author: Bryan Newbold <bnewbold@leaflabs.com>
- * Date: October 2013
+ * Date: November 2013
  *
- * This is the top-level module for the Xess Corp Xula 2 development board.
+ * This is an intentionally complicated top-level file.
  *
  * TODO if using this as a template for another design:
  *  - use a clock buffer, even if sticking with 12mhz
  */
 
-module main (
+module complicated (
     input wire clock_12mhz,
     inout wire [31:0] chan,
     inout wire chan_clk,
@@ -25,38 +25,26 @@ module main (
     output wire flash_miso
     );
 
+    parameter GIT_COMMIT = 0;
+    parameter BUILD_UNIX_TIME = 0;
+
     wire reset = chan[0];
-    wire uart_rx = chan[17];
-    wire uart_tx = chan[18];
 
     reg [22:0] throb_counter = 0;
     reg throb_led = 0;
     assign chan[10] = throb_led;
 
-    wire [7:0] rx_byte;
-    wire [7:0] tx_byte;
-    wire uart_flag;
-    simple_uart #(
-        .CLOCK_DIVIDE(313) // for 12MHz clock
-    ) simple_uart_inst (
-        .clk(clock_12mhz),
-        .rst(reset),
-        .rx(chan[17]),
-        .tx(chan[18]),
-        .transmit(uart_flag),
-        .tx_byte(tx_byte),
-        .received(uart_flag),
-        .rx_byte(rx_byte),
-        .is_receiving(),
-        .is_transmitting(),
-        .recv_error()
-        );
-
-    rot13 rot13_inst (
-        .clock(clock_12mhz),
-        .reset(reset),
-        .in_char(rx_byte),
-        .out_char(tx_byte)
+    bram bram_inst (
+        .clka(clock_12mhz),
+        .ena(1'b0),
+        .wea(1'b1),
+        .addra(10),
+        .dina(11),
+        .clkb(clock_12mhz),
+        .rstb(reset),
+        .enb(1'b0),
+        .addrb(13),
+        .doutb()
         );
 
     always @(posedge clock_12mhz) begin
@@ -79,9 +67,5 @@ module main (
     assign flash_sclk = 1'bZ;
     assign flash_mosi = 1'bZ;
     assign flash_miso = 1'bZ;
-
-    // Squelch unused input warnings
-    (* KEEP="TRUE" *) wire dummy;
-    assign dummy =& {chan[31:0], chan_clk};
 
 endmodule

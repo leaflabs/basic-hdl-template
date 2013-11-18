@@ -1,0 +1,16 @@
+
+cleanup simple_uart.v (remove warnings)
+
+effort levels seem high by default:
+    Overall effort level (-ol):   High 
+    Router effort level (-rl):    High 
+    -> 'make quicksynth' ?
+
+add support for post-synthesis simulation
+
+autoimpact (needs testing)
+    impact -mode bscan -b build/sp605.bit -port auto -autoassign (needs testing)
+
+Add linting to tests (aka, tb/*_tb.v)
+
+'lint' should use vfiles, not -I./hdl
