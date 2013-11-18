@@ -1,6 +1,6 @@
 # Device-specific make targets
 
-.PHONY: scp
+.PHONY: scp remote_xdevcfg
 
 zynq_ssh_host ?= zedboard
 

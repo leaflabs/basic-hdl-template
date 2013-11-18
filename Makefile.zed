@@ -15,6 +15,13 @@ vendor := xilinx
 #include ./contrib/xula2/settings.mk
 #extra_includes += ./contrib/xula2/targets.mk
 
+### Uncomment these lines to use the Avnet ZedBoard or MicroZed dev board with
+### default configuration
+### See also ./contrib/zed/README.zed
+include ./contrib/zed/zedboard_settings.mk
+#include ./contrib/zed/microzed_settings.mk
+zynq_ssh_host := root@zedboard	# SSH target; could also be user@1.2.3.4
+
 ### Edit and uncomment the below lines to use a custom board
 #board := exampleboard
 #family := spartan6
@@ -28,32 +35,6 @@ vendor := xilinx
 ### Uncomment this line and create a new makefile to include any
 ### hardware-specific targets (eg, upload via SPI)
 #extra_includes += exampleproj.mk
-
-### This is the chipset for the Avnet Zedboard
-board := zedboard
-family := zynq7000
-device := xc7z020
-speedgrade := -1
-device_package := clg484
-ucf_file := zedboard.ucf
-bitconf_file := zedboard.bitconf
-opt_file := contrib/default.opt
-zynq_ssh_host := root@zedboard	# SSH target; could also be user@1.2.3.4
-extra_includes += ./contrib/zynq.mk
-
-### This is the chipset for the Avnet Microzed, Zynq 7010 variant
-### There is a 7020 variant available as a SoM, but the 7010 is what the
-### "MicroZed Evaluation Kit" includes.
-#board := microzed
-#family := zynq7000
-#device := xc7z010
-#speedgrade := -1
-#device_package := clg400
-#ucf_file := microzed.ucf
-#bitconf_file := microzed.bitconf
-#opt_file := contrib/default.opt
-#extra_includes += ./contrib/zynq.mk
-
 
 part := $(device)$(speedgrade)-$(device_package)
 
@@ -77,9 +58,8 @@ verilog_files += hdl/axi_lite_slave.v
 ### Use one file per line; do not use wildcards (eg, hdl/*.v).
 vhdl_files +=
 
-extra_prj += block_design_vhdl_libraries.prj
-
 # all those horrible, horrible "Block Design" files
+extra_prj += block_design_vhdl_libraries.prj
 include ./block_design.mk
 
 ### List all testbench Verilog (.v) files below.
