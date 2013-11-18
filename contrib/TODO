@@ -1,6 +1,4 @@
 
-rename repo "basic-hdl-project"
-
 cleanup simple_uart.v (remove warnings)
 
 effort levels seem high by default:

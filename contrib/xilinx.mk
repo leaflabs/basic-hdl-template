@@ -1,4 +1,7 @@
-# This file oritinally came from excamera's build example.
+# This file oritinally came from excamera's build example:
+# http://excamera.com/sphinx/fpga-makefile.html
+#
+# That file contains no licensing or copyright claims, and neither does this.
 #
 # The top level module should define the variables below then include
 # this file.  The files listed should be in the same directory as the
