@@ -7,10 +7,10 @@
 prog: build/$(project).bit
 	# First ensure that xsload.py is installed
 	@xsload.py --version
-	@xsload.py --fpga build/$(project).bit
+	@sudo xsload.py --fpga build/$(project).bit
  
 # This target uploads to the SPI flash on board; non-volatile
 prog_flash: build/$(project).bit
 	# First ensure that xsload.py is installed
 	@xsload.py --version
-	@xsload.py --flash build/$(project).bit
+	@sudo xsload.py --flash build/$(project).bit
