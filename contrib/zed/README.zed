@@ -43,7 +43,7 @@ After boot needed to:
 
 ### HOWTO: Load via /dev/xdevcfg
 
-Quick and easy, 'make remote_xdevcfg' to copy a bitfile to a Zynq system over
+Quick and easy, 'make remote_ssh' to copy a bitfile to a Zynq system over
 SSH and then program the PL using the /dev/xdevcfg mechanism.
 
 To manually load a .bit.bin file (sometimes the xdevcfg character device needs

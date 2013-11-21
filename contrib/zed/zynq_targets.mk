@@ -7,7 +7,7 @@ zynq_ssh_host ?= zedboard
 scp: build/$(project).bit.bin
 	scp build/$(project).bit.bin $(zynq_ssh_host):
 
-remote_xdevcfg: build/$(project).bit.bin
+prog_ssh: build/$(project).bit.bin
 	scp build/$(project).bit.bin $(zynq_ssh_host):
 	@echo "Creating /dev/xdevcfg if it doesn't exist already..."
 	ssh $(zynq_ssh_host) -- "[ -c /dev/xdevcfg ] || mknod /dev/xdevcfg c 259 0"
