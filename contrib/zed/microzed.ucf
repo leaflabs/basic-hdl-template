@@ -11,11 +11,11 @@ TIMESPEC "TS_axi_aclk" = PERIOD "axi_aclk" 100 MHz HIGH 50%;
 # NB: don't edit below here... ?
 NET "MIO[53]"   IOSTANDARD = LVCMOS18 | DRIVE = "8" | SLEW = "slow" | LOC = "C11" ; #  Enet 0 / mdio / MIO[53]
 NET "MIO[52]"   IOSTANDARD = LVCMOS18 | DRIVE = "8" | SLEW = "slow" | LOC = "C10" ; #  Enet 0 / mdc / MIO[52]
-NET "MIO[51]"   IOSTANDARD = LVCMOS18 | DRIVE = "8" | SLEW = "slow" | LOC = "B9" ;  #  GPIO / gpio[51] / MIO[51]
+NET "MIO[51]"   IOSTANDARD = LVCMOS18 | DRIVE = "8" | SLEW = "slow" | LOC = "B9" ;  #  GPIO / gpio[51] / MIO[51]  User Button (PS)
 NET "MIO[50]"   IOSTANDARD = LVCMOS18 | DRIVE = "8" | SLEW = "slow" | LOC = "B13" ; #  GPIO / gpio[50] / MIO[50]
 NET "MIO[49]"   IOSTANDARD = LVCMOS18 | DRIVE = "8" | SLEW = "slow" | LOC = "C12" ; #  UART 1 / rx / MIO[49]
 NET "MIO[48]"   IOSTANDARD = LVCMOS18 | DRIVE = "8" | SLEW = "slow" | LOC = "B12" ; #  UART 1 / tx / MIO[48]
-NET "MIO[47]"   IOSTANDARD = LVCMOS18 | DRIVE = "8" | SLEW = "slow" | LOC = "B14" ; #  SD 0 / cd / MIO[47]
+NET "MIO[47]"   IOSTANDARD = LVCMOS18 | DRIVE = "8" | SLEW = "slow" | LOC = "B14" ; #  SD 0 / cd / MIO[47]  User LED (PS)
 NET "MIO[46]"   IOSTANDARD = LVCMOS18 | DRIVE = "8" | SLEW = "slow" | LOC = "D16" ; #  SD 0 / wp / MIO[46]
 NET "MIO[45]"   IOSTANDARD = LVCMOS18 | DRIVE = "8" | SLEW = "fast" | LOC = "B15" ; #  SD 0 / data[3] / MIO[45]
 NET "MIO[44]"   IOSTANDARD = LVCMOS18 | DRIVE = "8" | SLEW = "fast" | LOC = "F13" ; #  SD 0 / data[2] / MIO[44]
