@@ -1,0 +1,132 @@
+
+The MicroZed Zynq development board (slash SoM) from Avnet has a lot of
+"quirks". This document trys to outline some of these and describes one
+possible way to get an Ubuntu 12.10 Core armhf distribution up and running off
+the microSD card.
+
+TODO:
+- switch to Debian wheezy
+- buildroot script to automate all the below
+
+### HOWTO: Build an Ubuntu Image
+
+Will will be combining the following components:
+
+- a boot.bin (u-boot + FSBL alternative) built by ezynq
+- a custom patched linux-xlnx v14.6.02 kernel
+- a custom tweaked microzed-specific devicetree
+- a generic switch_root uramdisk.image.gz
+- a slightly tweaked Ubuntu 12.10 rootfs
+
+I recommend setting up a basic buildroot environment to fetch a cross-compiler
+toolchain and handle the kernel and devicetree compilation steps; the toolchain
+will also be useful for the ezynq build. buildroot is well documented and
+available from:
+
+    http://buildroot.uclibc.org/
+
+First we'll build the ezynq boot.bin. Fetch the source using the link below,
+then follow the instructions to build for the microzed. You can change the
+initenv path to point to a buildroot toolchain if you have that set up. Save
+the boot.bin once you are done.
+
+    git clone https://git.code.sf.net/p/elphel/ezynq
+
+Next fetch the devicetree .dts from the URL below and edit the 'bootargs' line:
+
+    bootargs = "console=ttyPS0,115200 root=/dev/mmcblk0p2 rw rootwait earlyprintk";
+
+    http://sourceforge.net/p/elphel/meta-elphel393/ci/master/tree/conf/machine/boards/microzed/microzed.dts
+
+Next fetch the linux-xlnx sources from the git url below. Switch to the
+v14.6.02 tag (not tested with v14.7; rumors of ethernet failure), and then
+monkey patch the file drivers/mmc/card/block.c to have mmc_blk_readonly() (near
+line 1955?) always return 0. Build a uImage and compile the .dts from above to
+a .dtb and hold on to those files.
+
+    git clone https://github.com/Xilinx/linux-xlnx
+
+Next get the uramdisk.image.gz (part of the boot .tar.xz) and rootfs from the
+"Ubuntu on Zynq" directions on the Xilinx Wiki:
+
+    http://www.wiki.xilinx.com/Ubuntu+on+Zynq
+
+Now prep a microSD card. There may be problems with some 4GB cards with some
+Zynq or Zed hardware, but I don't have details. Create a ~200MB boot FAT32
+partition first, followed by a ~2GB+ rootfs ext4 partition. Into the boot
+partition copy:
+
+    uImage              (kernel image)
+    boot.bin            (FSBL + u-boot, from ezynq)
+    uramdisk.image.gz   (from xilinx wiki)
+    devicetree.dtb      (compiled from microzed.dts earlier)
+
+Extract the rootfs tar.xz archive into the ext4 partition.
+
+The above should be sufficient to boot for the first time. Common problems are
+in troubleshooting section below. After a successful boot you probably want to
+add "auto eth0" and "iface eth0 inet dhcp" to /etc/network/interfaces, delete
+"/var/lib/apt/lists/*" and "/var/lib/apt/lists/partial/*" (else apt-get update
+will fail with hash mismatches), etc.
+
+See also README.zed.
+
+### Troubleshooting
+
+If ethernet doesn't work, look for a message like "invalid address, use
+assigned" in dmesg. Not sure what the resolution to that problem is... bad
+mac_local in the devicetree? Make sure the clock speed is set to 125MHz.
+
+If booting fails at the point when the rootfs partition trys to mount, look in
+the boot log to see if the mmcblk0 device is "(ro)"; this is the read-only
+problem fixed by a monkey patch above and discussed in background below. For
+other problems mounting, try rebooting (sigh).
+
+If it seems like Ubuntu has failed to boot, this may be due to DHCP being slow
+or timing out. You could remove the /etc/network/interfaces auto dhcp setup in
+the rootfs, but then you can't log in via SSH (need to use the USB port
+instead; see also MicroZed errata for DANGER WARNING about carrierboard + USB
+power).
+
+As a reminder, the microstrip headers on the bottom of the board will not be
+powered unless there is a carrier board supplying bank voltages to the Zynq.
+This means the pins can't be directly probed for debugging.
+
+Be sure to use a stable source of USB power (eg, don't have an intermediary
+passive HUB between a computer and the microzed). You may experience power
+cycles at random times otherwise, or particularly when using a hardware
+peripheral (ethernet, microSD) for the first time (which presumably requires
+extra current).
+
+The Zynq chip will get very hot (about 60 celsius) if there isn't a heatsink or
+fan.
+
+### Background and Misc
+
+One big problem with the MicroZed using default images is getting microSD cards
+to mount as read/write. microSD cards don't have a "write protect" pin. The
+MicroZed hardware pulls the write protect (wp) line down, so the linux kernel
+should always be able to mount it rw, and there are various patches floating
+around to enable quirks modes to ignore the wp flag (eg, the has-wp flag in
+devicetree files), but unless i'm missing something none of these fixes work.
+The kernel patch solution mentioned above is definately a "nuclear" workaround.
+In general most folks seem to want to keep the microSD in a read-only mode
+(which is fine, microSD cards are unreliable and filesystems are often not
+cleanly unmounted in embedded systems), but running a generic linux distro for
+rapid iteration early development and prototyping requires rw.
+
+Another big problem is getting the proper combination of Linux Kernel and
+devicetree file to get the ethernet running soothly. The above directions seem
+to work with casual use, but have not be stress tested.
+
+Another huge frustration was that the default Xilinx pre-compiled u-boot images
+would randomly could not read the FAT32 boot partition (even though the Zynq
+build-in bootloader already loaded the boot.bin from it!) and gave
+"Unrecognized filesystem type" errors. This was resolved by moving to the ezynq
+method instead (which is also significantly more FOSS/hacker friendly).
+
+http://forums.xilinx.com/t5/Embedded-Linux/Linux-Hangs-on-boot-up-with-SDK-generated-device-tree/td-p/349697
+http://forums.xilinx.com/t5/Embedded-Linux/etc-init-mountall-conf-of-Ubuntu12-10/m-p/376787#M7208
+http://zedboard.org/content/linux-boot-crashes-microzed (actually about ethernet in comments)
+https://lkml.org/lkml/2013/8/16/169
+
