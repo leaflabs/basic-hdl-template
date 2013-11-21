@@ -37,7 +37,8 @@ After boot needed to:
     cd /lib/modules
     ln -s 3.8.0-xilinx-00015-gabc285b/ 3.8.0-xilinx
 
-    apt-get install bzip2
+    rm /var/lib/apt/lists/*
+    rm /var/lib/apt/lists/partial/*
     apt-get update
 
 ### HOWTO: Load via /dev/xdevcfg
