@@ -69,8 +69,14 @@ vgenerics ?=
 extra_prj ?=
 verilog_files ?=
 vhdl_files ?=
-tbfiles ?=
 enc_vhdl_files ?=
+tbfiles ?=
+
+# The tb_ version of these variables allows overriding; eg if there are large
+# synth-only HDL libraries you don't want imported
+tb_verilog_files ?= $(verilog_files)
+tb_vhdl_files ?= $(vhdl_files)
+tb_enc_vhdl_files ?= $(enc_vhdl_files)
 
 # Low-level Tunables (override in top-level Makefile)
 synth_effort ?= high
@@ -253,15 +259,15 @@ build/$(project)_post_par.twr: build/$(project)_par.ncd
 		     $(project)_par.ncd $(project).pcf -o $(project)_post_par.twr $(colorize)"
 	@echo "See $@ for timing analysis details"
 
-tb/simulate_isim.prj: $(tbfiles) $(verilog_files) $(vhdl_files) $(enc_vhdl_files)
+tb/simulate_isim.prj: $(tbfiles) $(tb_verilog_files) $(tb_vhdl_files) $(tb_enc_vhdl_files)
 	@rm -f $@
-	@for f in $(verilog_files); do \
+	@for f in $(tb_verilog_files); do \
 		echo "verilog unenclib ../$$f" >> $@; \
 	done
-	@for f in $(vhdl_files); do \
+	@for f in $(tb_vhdl_files); do \
 		echo "vhdl unenclib ../$$f" >> $@; \
 	done
-	@for f in $(enc_vhdl_files); do \
+	@for f in $(tb_enc_vhdl_files); do \
 		echo "vhdl enclib ../$$f" >> $@; \
 	done
 	@for f in $(tbfiles); do \
