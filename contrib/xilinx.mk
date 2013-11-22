@@ -172,16 +172,19 @@ bitfiles: build/$(project).bit build/$(project).mcs
 		xst -help | head -1 | sed 's/^/#/' | cat - build/$(project).scr > $@/$(timestamp)/$(project).scr"
 
 build/$(project).mcs: build/$(project).bit
+	@if [ ! -f build/$(project).bit ]; then false; fi
 	@echo "Generating $@..."
 	@bash -c "$(xil_env); \
 		promgen -w -data_width $(mcs_datawidth) -s $(flashsize) -p mcs \
 		        -o $(project).mcs -u 0 $(project).bit $(colorize)"
+	@if [ ! -f $@ ]; then false; fi
 
 build/$(project).bit: build/$(project)_par.ncd build/$(project)_post_par.twr $(bitconf_file)
 	@echo "Generating $@..."
 	@bash -c "$(xil_env); \
 		bitgen $(intstyle) -f ../$(bitconf_file) -w $(project)_par.ncd \
 		       $(project).bit $(project).pcf $(colorize)"
+	@if [ ! -f $@ ]; then false; fi
 
 
 build/$(project)_par.ncd: build/$(project).ncd build/$(project)_post_map.twr
@@ -191,6 +194,7 @@ build/$(project)_par.ncd: build/$(project).ncd build/$(project)_post_map.twr
 	else \
 		false; \
 	fi "
+	@if [ ! -f $@ ]; then false; fi
 
 build/$(project).ncd: build/$(project).ngd
 	@if [ -r $(project)_par.ncd ]; then \
@@ -201,11 +205,14 @@ build/$(project).ncd: build/$(project).ngd
 	fi; \
 	bash -c "$(xil_env); \
 		map $(intstyle) $(map_opts) $$smartguide $(project).ngd $(multithreading) $(colorize)"
+	@if [ ! -f $@ ]; then false; fi
 
 build/$(project).ngd: build/$(project).ngc $(ucf_file) $(bmm_file)
+	@rm -f $@
 	@bash -c "$(xil_env); \
 		ngdbuild $(intstyle) $(project).ngc -bm ../$(bmm_file) \
 		         -sd ../cores -uc ../$(ucf_file) -aul $(colorize)"
+	@if [ ! -f $@ ]; then false; fi
 
 build/$(project).ngc: $(verilog_files) $(vhdl_files) $(local_corengcs) build/$(project).scr build/$(project).prj 
 	@echo "HACK: Forcing re-build of .scr configuration file..."
