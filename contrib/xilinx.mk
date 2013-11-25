@@ -89,6 +89,10 @@ par_opts ?= -ol $(synth_effort)
 intstyle ?= -intstyle xflow
 multithreading ?= -mt 4
 
+# Minimal list of bitfiles to be generated
+bitfile_list += build/$(project).bit
+bitfile_list += build/$(project).mcs
+
 # Build Environment
 iseenvfile?= $(iseenv)/settings$(hostbits).sh
 xil_env ?= mkdir -p build/; cd ./build; source $(iseenvfile) > /dev/null
@@ -163,16 +167,19 @@ untouchcores:
 
 timestamp = $(shell date +%F-%H%M)
 
-bitfiles: build/$(project).bit build/$(project).mcs
+bitfiles: $(bitfile_list)
 	@mkdir -p $@/$(timestamp)/logs
 	@mkdir -p $@/latest/logs
 	@# NB: _bd.bmm was listed below in the past...
-	@for x in .bit .mcs .cfi _par.ncd _post_par.twr _post_par.twx; do \
+	@for x in $(bitfile_list); do \
+		cp $$x $@/$(timestamp)/$(project)$$x || true; \
+	done;
+	@for x in .cfi _par.ncd _post_par.twr _post_par.twx; do \
 		cp build/$(project)$$x $@/$(timestamp)/$(project)$$x || true; \
 		cp build/$(project)$$x $@/latest/$(project)$$x || true; \
 	done;
-	@cp -R build/_xmsgs $@/$(timestamp)/logs || true;
-	@cp -R build/_xmsgs $@/latest/logs || true;
+	@cp -R build/_xmsgs/* $@/$(timestamp)/logs || true;
+	@cp -R build/_xmsgs/* $@/latest/logs || true;
 	@bash -c "$(xil_env); \
 		cd ..; \
 		xst -help | head -1 | sed 's/^/#/' | cat - build/$(project).scr > $@/$(timestamp)/$(project).scr"
