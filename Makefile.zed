@@ -18,10 +18,10 @@ vendor := xilinx
 ### Uncomment these lines to use the Avnet ZedBoard or MicroZed dev board with
 ### default configuration
 ### See also ./contrib/zed/README.zed
-include ./contrib/zed/zedboard_settings.mk
-#include ./contrib/zed/microzed_settings.mk
+#include ./contrib/zed/zedboard_settings.mk
+include ./contrib/zed/microzed_settings.mk
 # SSH target; could also be user@1.2.3.4
-zynq_ssh_host := root@zed
+zynq_ssh_host := root@10.1.10.89
 
 ### Edit and uncomment the below lines to use a custom board
 #board := exampleboard

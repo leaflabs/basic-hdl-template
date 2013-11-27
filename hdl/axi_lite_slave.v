@@ -163,8 +163,6 @@ module axi_lite_slave (
   input  wire                          S_AXI_RREADY
 );
 
-assign interrupt_request = 0;
-
 ////////////////////////////////////////////////////////////////////////////
 // local parameter for addressing 32 bit / 64 bit C_S_AXI_DATA_WIDTH
 // ADDR_LSB is used for addressing 32/64 bit registers/memories
@@ -233,7 +231,7 @@ reg                          axi_arready;
 
 ////////////////////////////////////////////////////////////////////////////
 // Slave register 0
-reg [`C_S_AXI_DATA_WIDTH-1:0]    slv_reg0;
+reg [`C_S_AXI_DATA_WIDTH-1:0]    slv_reg0 = 0;
 ////////////////////////////////////////////////////////////////////////////
 // Slave register 1
 reg [`C_S_AXI_DATA_WIDTH-1:0]    slv_reg1;
@@ -384,7 +382,7 @@ assign S_AXI_RRESP  = axi_rresp;
   begin
     if ( S_AXI_ARESETN == 1'b0 )
       begin
-        slv_reg0 <= {`C_S_AXI_DATA_WIDTH{1'b0}};
+        //slv_reg0 <= {`C_S_AXI_DATA_WIDTH{1'b1}};
         slv_reg1 <= {`C_S_AXI_DATA_WIDTH{1'b0}};
         slv_reg2 <= {`C_S_AXI_DATA_WIDTH{1'b0}};
         slv_reg3 <= {`C_S_AXI_DATA_WIDTH{1'b0}};
@@ -393,18 +391,21 @@ assign S_AXI_RRESP  = axi_rresp;
       if (slv_reg_wren)
         begin
           case ( axi_awaddr[ADDR_MSB-1:ADDR_LSB] )
+            /*
             3'h0 :
               for ( byte_index = 0; byte_index <= (`C_S_AXI_DATA_WIDTH/8)-1; byte_index = byte_index+1 )
                 if ( S_AXI_WSTRB[byte_index] == 1 ) begin
                   // Respective byte enables are asserted as per write strobes
                   slv_reg0[(byte_index*8) +: 8] <= S_AXI_WDATA[(byte_index*8) +: 8];
                 end
-            3'h1 :
+            */
+            3'h1 : begin
               for ( byte_index = 0; byte_index <= (`C_S_AXI_DATA_WIDTH/8)-1; byte_index = byte_index+1 )
                 if ( S_AXI_WSTRB[byte_index] == 1 ) begin
                    // Respective byte enables are asserted as per write strobes
                    slv_reg1[(byte_index*8) +: 8] <= S_AXI_WDATA[(byte_index*8) +: 8];
                 end
+            end
             3'h2 :
               for ( byte_index = 0; byte_index <= (`C_S_AXI_DATA_WIDTH/8)-1; byte_index = byte_index+1 )
                 if ( S_AXI_WSTRB[byte_index] == 1 ) begin
@@ -418,7 +419,7 @@ assign S_AXI_RRESP  = axi_rresp;
                   slv_reg3[(byte_index*8) +: 8] <= S_AXI_WDATA[(byte_index*8) +: 8];
                 end
             default : begin
-                        slv_reg0 <= slv_reg0;
+                        //slv_reg0 <= slv_reg0;
                         slv_reg1 <= slv_reg1;
                         slv_reg2 <= slv_reg2;
                         slv_reg3 <= slv_reg3;
@@ -537,6 +538,8 @@ rot13 rot13_i (
     .out_char(rot13_char)
     );
 
+assign interrupt_request = (slv_reg1 != 32'd0);
+
 ////////////////////////////////////////////////////////////////////////////
 // Slave register read enable is asserted when valid address is available
 // and the slave is ready to accept the read address.
@@ -552,7 +555,10 @@ rot13 rot13_i (
       begin
         // Read address mux
         case ( axi_araddr[ADDR_MSB-1:ADDR_LSB] )
-          3'h0   : reg_data_out <= slv_reg0;
+          3'h0   : begin
+            reg_data_out <= slv_reg0;
+            slv_reg0 <= slv_reg0 + 1;
+          end
           3'h1   : reg_data_out <= slv_reg1;
           3'h2   : reg_data_out <= slv_reg2;
           3'h3   : reg_data_out <= {24'd0, rot13_char};
