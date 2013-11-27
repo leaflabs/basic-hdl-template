@@ -48,7 +48,7 @@
 # These dot-targets must come first in the file
 .PHONY: default xilinx_cores clean twr_map twr_par ise isim coregen \
 	impact ldimpact lint planahead partial_fpga_editor final_fpga_editor \
-	partial_timing final_timing tests all bit mcs xreport
+	map_timing par_timing tests all bit mcs xreport
 
 # "PRECIOUS" files will not be deleted by make as casually
 .PRECIOUS: tb/%.isim tb/isim/unenclib/%.sdb
