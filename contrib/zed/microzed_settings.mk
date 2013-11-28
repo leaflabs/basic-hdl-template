@@ -2,7 +2,7 @@
 # There is a 7020 variant available as a SoM, but the 7010 is what the
 # "MicroZed Evaluation Kit" includes.
 board := microzed
-family := zynq7000
+family := zynq
 device := xc7z010
 speedgrade := -1
 device_package := clg400
