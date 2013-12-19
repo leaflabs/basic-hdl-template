@@ -1,4 +1,5 @@
 # If this file is named ./Makefile.example, move it to ./Makefile and edit it.
+default: bitfiles
 
 ### Project-specific Makefile
 
