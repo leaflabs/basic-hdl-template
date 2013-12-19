@@ -61,7 +61,10 @@ partition copy:
     uramdisk.image.gz   (from xilinx wiki)
     devicetree.dtb      (compiled from microzed.dts earlier)
 
-Extract the rootfs tar.xz archive into the ext4 partition.
+Extract the rootfs tar.xz archive into the ext4 partition:
+
+    cd /mnt
+    tar xvJf ~/zynq-ubuntu-core-12.10-core-armhf-rootfs.tar.xz
 
 The above should be sufficient to boot for the first time. Common problems are
 in troubleshooting section below. After a successful boot you probably want to
