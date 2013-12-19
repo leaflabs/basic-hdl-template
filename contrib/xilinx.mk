@@ -115,14 +115,13 @@ include $(libmks)
 xilinx_cores: $(corengcs)
 
 corengcs = $(foreach core,$(xilinx_cores),$(core:.xco=.ngc))
-local_corengcs = $(foreach ngc,$(corengcs),$(notdir $(ngc)))
 verilog_files += $(foreach core,$(xilinx_cores),$(core:.xco=.v))
 tbmods = $(foreach tbm,$(tbfiles),unenclib.`basename $(tbm) .v`)
 define cp_template
 $(2): $(1)
 	cp $(1) $(2)
 endef
-$(foreach ngc,$(corengcs),$(eval $(call cp_template,$(ngc),$(notdir $(ngc)))))
+$(foreach ngc,$(corengcs),$(eval $(call cp_template,$(ngc),build/$(notdir $(ngc)))))
 
 # Aliases
 twr_map: build/$(project)_post_map.twr
@@ -227,7 +226,7 @@ build/$(project).ngd: build/$(project).ngc $(ucf_file) $(bmm_file)
 		         -sd ../cores -uc ../$(ucf_file) -aul $(colorize)"
 	@if [ ! -f $@ ]; then false; fi
 
-build/$(project).ngc: $(verilog_files) $(vhdl_files) $(local_corengcs) build/$(project).scr build/$(project).prj 
+build/$(project).ngc: $(verilog_files) $(vhdl_files) $(corengcs) build/$(project).scr build/$(project).prj 
 	@echo "HACK: Forcing re-build of .scr configuration file..."
 	@bash -c "rm build/$(project).scr; make build/$(project).scr"
 	# XST does not fail on error (!), so deleting the .ngc before building
