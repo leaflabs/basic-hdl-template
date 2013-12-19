@@ -56,7 +56,7 @@
 # Setup default targets
 default: bitfiles
 all: bitfiles
-.DEFAULT_GOAL: bitfiles
+.DEFAULT: bitfiles
 
 # This file only works with Xilinx stuff
 vendor = xilinx
