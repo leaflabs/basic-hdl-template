@@ -4,6 +4,8 @@
 
 zynq_ssh_host ?= zedboard
 
+bitfile_list += build/$(project).bit.bin
+
 scp: build/$(project).bit.bin
 	scp build/$(project).bit.bin $(zynq_ssh_host):
 
