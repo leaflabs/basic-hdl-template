@@ -13,7 +13,7 @@
 module main (
 
     // Internal (PS-PL) DDR Interface
-    inout wire [15:0] DDR_Addr,
+    inout wire [14:0] DDR_Addr,
     inout wire [2:0] DDR_BankAddr,
     inout wire DDR_CAS_n,
     inout wire DDR_Clk_n,        // was: DDR_ck_n
