@@ -172,6 +172,7 @@ bitfiles: $(bitfile_list)
 	@# NB: _bd.bmm was listed below in the past...
 	@for x in $(bitfile_list); do \
 		cp $$x $@/$(timestamp)/ || true; \
+		cp $$x $@/latest/ || true; \
 	done;
 	@for x in .cfi _par.ncd _post_par.twr _post_par.twx; do \
 		cp build/$(project)$$x $@/$(timestamp)/$(project)$$x || true; \
