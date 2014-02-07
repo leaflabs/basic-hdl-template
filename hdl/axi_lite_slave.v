@@ -62,106 +62,89 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-`timescale 1ns/1ps
+/*
+ *  Significant modifications by bnewbold@leaflabs.com, November-December 2013
+ *
+ *  The intent is to port these changes to a re-written, non-Xilinx version of
+ *  this file ASAP.
+ *
+ *  This file contains the Processor-FPGA memory interface, which is
+ *  implemented as an AXI4-Lite slave endpoint.
+ *
+ */
 
-////////////////////////////////////////////////////////////////////////////
 // Width of S_AXI data bus. The slave accepts write data and issues read data
 // of width C_S_AXI_DATA_WIDTH
 `define C_S_AXI_DATA_WIDTH 32
-`define C_S_AXI_ADDR_WIDTH 5
+`define C_S_AXI_ADDR_WIDTH 16
+
 module axi_lite_slave (
-  ////////////////////////////////////////////////////////////////////////////
-  // System Signals
-
+  //// System Signals
   output wire interrupt_request,
-
-  ////////////////////////////////////////////////////////////////////////////
   // AXI clock signal
   input wire S_AXI_ACLK,
-  ////////////////////////////////////////////////////////////////////////////
   // AXI active low reset signal
   input wire S_AXI_ARESETN,
-
-  ////////////////////////////////////////////////////////////////////////////
-  // Slave Interface Write Address channel Ports
-
-  ////////////////////////////////////////////////////////////////////////////
-  // Master Interface Write Address Channel ports
+  //// Master Interface Write Address Channel ports
   // Write address (issued by master, acceped by Slave)
   input  wire [`C_S_AXI_ADDR_WIDTH - 1:0] S_AXI_AWADDR,
-  ////////////////////////////////////////////////////////////////////////////
   // Write address valid. This signal indicates that the master signaling
   // valid write address and control information.
   input  wire                          S_AXI_AWVALID,
-  ////////////////////////////////////////////////////////////////////////////
   // Write address ready. This signal indicates that the slave is ready
   // to accept an address and associated control signals.
   output wire                          S_AXI_AWREADY,
-
-  ////////////////////////////////////////////////////////////////////////////
   // Slave Interface Write Data channel Ports
   // Write data (issued by master, acceped by Slave)
   input  wire [`C_S_AXI_DATA_WIDTH-1:0] S_AXI_WDATA,
-  ////////////////////////////////////////////////////////////////////////////
   // Write strobes. This signal indicates which byte lanes hold
   // valid data. There is one write strobe bit for each eight
   // bits of the write data bus.
   input  wire [`C_S_AXI_DATA_WIDTH/8-1:0] S_AXI_WSTRB,
-  ////////////////////////////////////////////////////////////////////////////
   //Write valid. This signal indicates that valid write
   // data and strobes are available.
   input  wire                          S_AXI_WVALID,
-  ////////////////////////////////////////////////////////////////////////////
   // Write ready. This signal indicates that the slave
   // can accept the write data.
   output wire                          S_AXI_WREADY,
-
-  ////////////////////////////////////////////////////////////////////////////
   // Slave Interface Write Response channel Ports
-
-  ////////////////////////////////////////////////////////////////////////////
   // Write response. This signal indicates the status
   // of the write transaction.
   output wire [1:0]                    S_AXI_BRESP,
-  ////////////////////////////////////////////////////////////////////////////
   // Write response valid. This signal indicates that the channel
   // is signaling a valid write response.
   output wire                          S_AXI_BVALID,
-  ////////////////////////////////////////////////////////////////////////////
   // Response ready. This signal indicates that the master
   // can accept a write response.
   input  wire                          S_AXI_BREADY,
-
-  ////////////////////////////////////////////////////////////////////////////
   // Slave Interface Read Address channel Ports
   // Read address (issued by master, acceped by Slave)
   input  wire [`C_S_AXI_ADDR_WIDTH - 1:0] S_AXI_ARADDR,
-  ////////////////////////////////////////////////////////////////////////////
   // Read address valid. This signal indicates that the channel
   // is signaling valid read address and control information.
   input  wire                          S_AXI_ARVALID,
-  ////////////////////////////////////////////////////////////////////////////
   // Read address ready. This signal indicates that the slave is
   // ready to accept an address and associated control signals.
   output wire                          S_AXI_ARREADY,
-
-  ////////////////////////////////////////////////////////////////////////////
   // Slave Interface Read Data channel Ports
   // Read data (issued by slave)
   output wire [`C_S_AXI_DATA_WIDTH-1:0] S_AXI_RDATA,
-  ////////////////////////////////////////////////////////////////////////////
   // Read response. This signal indicates the status of the
   // read transfer.
   output wire [1:0]                    S_AXI_RRESP,
-  ////////////////////////////////////////////////////////////////////////////
   // Read valid. This signal indicates that the channel is
   // signaling the required read data.
   output wire                          S_AXI_RVALID,
-  ////////////////////////////////////////////////////////////////////////////
   // Read ready. This signal indicates that the master can
   // accept the read data and response information.
   input  wire                          S_AXI_RREADY
 );
+
+parameter MM_MAGIC_NUMBER = 32'd0;
+parameter MM_VERSION = 32'd0;
+parameter CORE_FEATURE_FLAGS = 32'd0;
+parameter GIT_COMMIT_HASH = 32'd0;
+parameter UNIX_TIMESTAMP = 64'd0;
 
 ////////////////////////////////////////////////////////////////////////////
 // local parameter for addressing 32 bit / 64 bit C_S_AXI_DATA_WIDTH
@@ -186,96 +169,54 @@ localparam integer ADDR_MSB = `C_S_AXI_ADDR_WIDTH;
 
 ////////////////////////////////////////////////////////////////////////////
 // AXI4 Lite internal signals
-
-////////////////////////////////////////////////////////////////////////////
 // read response
 reg [1 :0]                   axi_rresp;
-////////////////////////////////////////////////////////////////////////////
 // write response
 reg [1 :0]                   axi_bresp;
-////////////////////////////////////////////////////////////////////////////
 // write address acceptance
 reg                          axi_awready;
-////////////////////////////////////////////////////////////////////////////
 // write data acceptance
 reg                          axi_wready;
-////////////////////////////////////////////////////////////////////////////
 // write response valid
 reg                          axi_bvalid;
-////////////////////////////////////////////////////////////////////////////
 // read data valid
 reg                          axi_rvalid;
-////////////////////////////////////////////////////////////////////////////
 // write address
 reg [ADDR_MSB-1:0] axi_awaddr;
-////////////////////////////////////////////////////////////////////////////
 // read address valid
 reg [ADDR_MSB-1:0] axi_araddr;
-////////////////////////////////////////////////////////////////////////////
 // read data
 reg [`C_S_AXI_DATA_WIDTH-1:0] axi_rdata;
-////////////////////////////////////////////////////////////////////////////
 // read address acceptance
 reg                          axi_arready;
 
-////////////////////////////////////////////////////////////////////////////
 // Example-specific design signals
-
-
-////////////////////////////////////////////////////////////////////////////
-// Signals for user logic chip select generation
-
-////////////////////////////////////////////////////////////////////////////
-// Signals for user logic register space example
-// Four slave register
-
-////////////////////////////////////////////////////////////////////////////
-// Slave register 0
 reg [`C_S_AXI_DATA_WIDTH-1:0]    slv_reg0 = 0;
-////////////////////////////////////////////////////////////////////////////
-// Slave register 1
 reg [`C_S_AXI_DATA_WIDTH-1:0]    slv_reg1;
-////////////////////////////////////////////////////////////////////////////
-// Slave register 2
 reg [`C_S_AXI_DATA_WIDTH-1:0]    slv_reg2;
-////////////////////////////////////////////////////////////////////////////
-// Slave register 3
 reg [`C_S_AXI_DATA_WIDTH-1:0]    slv_reg3;
-////////////////////////////////////////////////////////////////////////////
+
 // Slave register read enable
 wire                            slv_reg_rden;
-////////////////////////////////////////////////////////////////////////////
 // Slave register write enable
 wire                            slv_reg_wren;
-////////////////////////////////////////////////////////////////////////////
 // register read data
 reg [`C_S_AXI_DATA_WIDTH-1:0]    reg_data_out;
 
 integer                         byte_index;
 
-////////////////////////////////////////////////////////////////////////////
-//I/O Connections assignments
-
-////////////////////////////////////////////////////////////////////////////
 //Write Address Ready (AWREADY)
 assign S_AXI_AWREADY = axi_awready;
-
-////////////////////////////////////////////////////////////////////////////
 //Write Data Ready(WREADY)
 assign S_AXI_WREADY  = axi_wready;
-
-////////////////////////////////////////////////////////////////////////////
 //Write Response (BResp)and response valid (BVALID)
 assign S_AXI_BRESP  = axi_bresp;
 assign S_AXI_BVALID = axi_bvalid;
-
-////////////////////////////////////////////////////////////////////////////
 //Read Address Ready(AREADY)
 assign S_AXI_ARREADY = axi_arready;
-
-////////////////////////////////////////////////////////////////////////////
 //Read and Read Data (RDATA), Read Valid (RVALID) and Response (RRESP)
-assign S_AXI_RDATA  = axi_rdata;
+//assign S_AXI_RDATA  = axi_rdata;
+assign S_AXI_RDATA  = reg_data_out;
 assign S_AXI_RVALID = axi_rvalid;
 assign S_AXI_RRESP  = axi_rresp;
 
@@ -382,48 +323,18 @@ assign S_AXI_RRESP  = axi_rresp;
   begin
     if ( S_AXI_ARESETN == 1'b0 )
       begin
-        //slv_reg0 <= {`C_S_AXI_DATA_WIDTH{1'b1}};
-        slv_reg1 <= {`C_S_AXI_DATA_WIDTH{1'b0}};
-        slv_reg2 <= {`C_S_AXI_DATA_WIDTH{1'b0}};
-        slv_reg3 <= {`C_S_AXI_DATA_WIDTH{1'b0}};
+		// pass
       end
     else begin
       if (slv_reg_wren)
         begin
           case ( axi_awaddr[ADDR_MSB-1:ADDR_LSB] )
-            /*
-            3'h0 :
-              for ( byte_index = 0; byte_index <= (`C_S_AXI_DATA_WIDTH/8)-1; byte_index = byte_index+1 )
-                if ( S_AXI_WSTRB[byte_index] == 1 ) begin
-                  // Respective byte enables are asserted as per write strobes
-                  slv_reg0[(byte_index*8) +: 8] <= S_AXI_WDATA[(byte_index*8) +: 8];
-                end
-            */
-            3'h1 : begin
-              for ( byte_index = 0; byte_index <= (`C_S_AXI_DATA_WIDTH/8)-1; byte_index = byte_index+1 )
-                if ( S_AXI_WSTRB[byte_index] == 1 ) begin
-                   // Respective byte enables are asserted as per write strobes
-                   slv_reg1[(byte_index*8) +: 8] <= S_AXI_WDATA[(byte_index*8) +: 8];
-                end
-            end
-            3'h2 :
-              for ( byte_index = 0; byte_index <= (`C_S_AXI_DATA_WIDTH/8)-1; byte_index = byte_index+1 )
-                if ( S_AXI_WSTRB[byte_index] == 1 ) begin
-                  // Respective byte enables are asserted as per write strobes
-                  slv_reg2[(byte_index*8) +: 8] <= S_AXI_WDATA[(byte_index*8) +: 8];
-                end
-            3'h3 :
-              for ( byte_index = 0; byte_index <= (`C_S_AXI_DATA_WIDTH/8)-1; byte_index = byte_index+1 )
-                if ( S_AXI_WSTRB[byte_index] == 1 ) begin
-                  // Respective byte enables are asserted as per write strobes
-                  slv_reg3[(byte_index*8) +: 8] <= S_AXI_WDATA[(byte_index*8) +: 8];
-                end
+            14'd0017: slv_reg1 <= S_AXI_WDATA;
+            14'd0018: slv_reg2 <= S_AXI_WDATA;
+            14'd0019: slv_reg3 <= S_AXI_WDATA;
             default : begin
-                        //slv_reg0 <= slv_reg0;
-                        slv_reg1 <= slv_reg1;
-                        slv_reg2 <= slv_reg2;
-                        slv_reg3 <= slv_reg3;
-                      end
+              // pass
+            end
           endcase
         end
     end
@@ -545,45 +456,33 @@ assign interrupt_request = (slv_reg1 != 32'd0);
 // and the slave is ready to accept the read address.
   assign slv_reg_rden = axi_arready & S_AXI_ARVALID & ~axi_rvalid;
 
-  always @( slv_reg0, slv_reg1, slv_reg2, slv_reg3, S_AXI_ARESETN, slv_reg_rden, axi_araddr)
+  always @( posedge S_AXI_ACLK )
   begin
     if ( S_AXI_ARESETN == 1'b0 )
       begin
         reg_data_out <= {`C_S_AXI_DATA_WIDTH{1'b0}};
       end
     else
-      begin
+      if (slv_reg_rden) begin
         // Read address mux
-        case ( axi_araddr[ADDR_MSB-1:ADDR_LSB] )
-          3'h0   : begin
+        casex ( axi_araddr[ADDR_MSB-1:ADDR_LSB] )
+          /// Meta/Enumeration
+          14'd0000: reg_data_out <= MM_MAGIC_NUMBER[31:0];
+          14'd0001: reg_data_out <= MM_VERSION[31:0];
+          14'd0002: reg_data_out <= CORE_FEATURE_FLAGS[31:0];
+          14'd0003: reg_data_out <= GIT_COMMIT_HASH[31:0];
+          14'd0004: reg_data_out <= UNIX_TIMESTAMP[63:32];
+          14'd0005: reg_data_out <= UNIX_TIMESTAMP[31:0];
+          14'd0016: begin
             reg_data_out <= slv_reg0;
             slv_reg0 <= slv_reg0 + 1;
           end
-          3'h1   : reg_data_out <= slv_reg1;
-          3'h2   : reg_data_out <= slv_reg2;
-          3'h3   : reg_data_out <= {24'd0, rot13_char};
-          default : reg_data_out <= {`C_S_AXI_DATA_WIDTH{1'b0}};
+          14'd0017:  reg_data_out <= slv_reg1;
+          14'd0018:  reg_data_out <= slv_reg2;
+          14'd0019:  reg_data_out <= {24'd0, rot13_char};
+          default: reg_data_out <= {`C_S_AXI_DATA_WIDTH{1'b0}};
         endcase
         //end
-      end
-  end
-
-  always @( posedge S_AXI_ACLK )
-  begin
-    if ( S_AXI_ARESETN == 1'b0 )
-      begin
-        axi_rdata  <= 0;
-      end
-    else
-      begin
-        ////////////////////////////////////////////////////////////////////////////
-        // When there is a valid read address (S_AXI_ARVALID) with
-        // acceptance of read address by the slave (axi_arready),
-        // output the read dada
-        if (axi_arready && S_AXI_ARVALID && ~axi_rvalid)
-          begin
-            axi_rdata <= reg_data_out;     // register read data
-          end
       end
   end
 

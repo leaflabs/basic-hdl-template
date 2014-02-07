@@ -37,6 +37,29 @@ module main (
     inout wire PS_SRSTB,
     inout wire PS_CLK
     );
+// ==================== Begin Module ======================
+
+// your code here
+
+// ==================== Throbbers Etc ======================
+
+
+    /*
+    reg throb_led_aclk = 0;
+    reg [25:0] throb_counter_aclk = 0;
+    always @(posedge axi_aclk) begin
+        if (throb_counter_aclk>= 26'd25_000_000) begin
+            throb_counter_aclk<= 26'd0;
+            throb_led_aclk <= ~throb_led_aclk;
+        end else begin
+            throb_counter_aclk <= throb_counter_aclk + 26'd1;
+        end
+    end
+    */
+
+    wire [7:0] axi_leds;
+
+// ==================== AXI Memory Interface Stuff ======================
 
     wire axi_aclk;  // This net is the PS's FCLK_CLK0; 100MHz
     wire [0:0] axi_aresetn;
@@ -60,21 +83,6 @@ module main (
     wire [0:0] axi_slave1_wready;
     wire [3:0] axi_slave1_wstrb;
     wire [0:0] axi_slave1_wvalid;
-
-    /*
-    reg throb_led_aclk = 0;
-    reg [25:0] throb_counter_aclk = 0;
-    always @(posedge axi_aclk) begin
-        if (throb_counter_aclk>= 26'd50_000_000) begin
-            throb_counter_aclk<= 26'd0;
-            throb_led_aclk <= ~throb_led_aclk;
-        end else begin
-            throb_counter_aclk <= throb_counter_aclk + 26'd1;
-        end
-    end
-    */
-
-    wire [7:0] axi_leds;
 
 block_design block_design_i
        (.DDR_addr(DDR_Addr),
@@ -127,11 +135,11 @@ axi_lite_slave axi_lite_slave_i (
         .interrupt_request(axi_interrupt1),
         .S_AXI_ACLK(axi_aclk),
         .S_AXI_ARESETN(axi_aresetn),
-        .S_AXI_ARADDR(axi_slave1_araddr),
+        .S_AXI_ARADDR(axi_slave1_araddr[15:0]),
         //.S_AXI_ARPROT(axi_slave1_arprot),
         .S_AXI_ARREADY(axi_slave1_arready),
         .S_AXI_ARVALID(axi_slave1_arvalid),
-        .S_AXI_AWADDR(axi_slave1_awaddr),
+        .S_AXI_AWADDR(axi_slave1_awaddr[15:0]),
         //.S_AXI_AWPROT(axi_slave1_awprot),
         .S_AXI_AWREADY(axi_slave1_awready),
         .S_AXI_AWVALID(axi_slave1_awvalid),

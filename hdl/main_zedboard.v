@@ -47,29 +47,11 @@ module main (
     inout wire PS_SRSTB,
     inout wire PS_CLK
     );
+// ==================== Begin Module ======================
 
-    wire axi_aclk;  // This net is the PS's FCLK_CLK0; 100MHz
-    wire [0:0] axi_aresetn;
-    wire axi_interrupt1;
-    wire [31:0] axi_slave1_araddr;
-    wire [2:0] axi_slave1_arprot;
-    wire [0:0] axi_slave1_arready;
-    wire [0:0] axi_slave1_arvalid;
-    wire [31:0] axi_slave1_awaddr;
-    wire [2:0] axi_slave1_awprot;
-    wire [0:0] axi_slave1_awready;
-    wire [0:0] axi_slave1_awvalid;
-    wire [0:0] axi_slave1_bready;
-    wire [1:0] axi_slave1_bresp;
-    wire [0:0] axi_slave1_bvalid;
-    wire [31:0] axi_slave1_rdata;
-    wire [0:0] axi_slave1_rready;
-    wire [1:0] axi_slave1_rresp;
-    wire [0:0] axi_slave1_rvalid;
-    wire [31:0] axi_slave1_wdata;
-    wire [0:0] axi_slave1_wready;
-    wire [3:0] axi_slave1_wstrb;
-    wire [0:0] axi_slave1_wvalid;
+// your code here
+
+// ==================== Throbbers Etc ======================
 
     reg throb_led_100mhz = 0;
     reg [25:0] throb_counter_100mhz = 0;
@@ -102,6 +84,33 @@ module main (
     assign leds[5] = switches[5];
     assign leds[6] = throb_led_aclk;
     assign leds[7] = throb_led_100mhz;
+
+
+
+// ==================== AXI Memory Interface Stuff ======================
+
+    wire axi_aclk;  // This net is the PS's FCLK_CLK0; 100MHz
+    wire [0:0] axi_aresetn;
+    wire axi_interrupt1;
+    wire [31:0] axi_slave1_araddr;
+    wire [2:0] axi_slave1_arprot;
+    wire [0:0] axi_slave1_arready;
+    wire [0:0] axi_slave1_arvalid;
+    wire [31:0] axi_slave1_awaddr;
+    wire [2:0] axi_slave1_awprot;
+    wire [0:0] axi_slave1_awready;
+    wire [0:0] axi_slave1_awvalid;
+    wire [0:0] axi_slave1_bready;
+    wire [1:0] axi_slave1_bresp;
+    wire [0:0] axi_slave1_bvalid;
+    wire [31:0] axi_slave1_rdata;
+    wire [0:0] axi_slave1_rready;
+    wire [1:0] axi_slave1_rresp;
+    wire [0:0] axi_slave1_rvalid;
+    wire [31:0] axi_slave1_wdata;
+    wire [0:0] axi_slave1_wready;
+    wire [3:0] axi_slave1_wstrb;
+    wire [0:0] axi_slave1_wvalid;
 
 block_design block_design_i
        (.DDR_addr(DDR_Addr),
@@ -158,11 +167,11 @@ axi_lite_slave axi_lite_slave_i (
         .interrupt_request(axi_interrupt1),
         .S_AXI_ACLK(axi_aclk),
         .S_AXI_ARESETN(axi_aresetn),
-        .S_AXI_ARADDR(axi_slave1_araddr),
+        .S_AXI_ARADDR(axi_slave1_araddr[15:0]),
         //.S_AXI_ARPROT(axi_slave1_arprot),
         .S_AXI_ARREADY(axi_slave1_arready),
         .S_AXI_ARVALID(axi_slave1_arvalid),
-        .S_AXI_AWADDR(axi_slave1_awaddr),
+        .S_AXI_AWADDR(axi_slave1_awaddr[15:0]),
         //.S_AXI_AWPROT(axi_slave1_awprot),
         .S_AXI_AWREADY(axi_slave1_awready),
         .S_AXI_AWVALID(axi_slave1_awvalid),
