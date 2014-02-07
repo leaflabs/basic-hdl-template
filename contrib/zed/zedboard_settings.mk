@@ -1,6 +1,6 @@
 # Avnet Zedboard settings
 board := zedboard
-family := zynq7000
+family := zynq
 device := xc7z020
 speedgrade := -1
 device_package := clg484
