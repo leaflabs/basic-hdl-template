@@ -50,7 +50,7 @@ test -f ./contrib/QUICK_START.txt
 
 # Commit all that!
 
-  git commit -e -m "Starting new project using verilog-build template"
+  git commit -a -e -m "Starting new project using verilog-build template"
 
 echo "Alright, good to go."
 echo
