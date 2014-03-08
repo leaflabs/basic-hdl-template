@@ -70,6 +70,10 @@ include ./block_design.mk
 tbfiles += tb/rot13_tb.v
 #tbfiles += tb/zedboard_tb.v
 
+# Maintain a seperate list of sim-only testbench files
+tb_verilog_files += hdl/rot13.v
+tb_vhdl_files :=
+
 ### List all test/*_tb targets which should be executed by the "make tests"
 ### target.
 alltests := test/rot13_tb
