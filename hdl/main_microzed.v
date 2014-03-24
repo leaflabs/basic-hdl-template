@@ -39,6 +39,10 @@ module main (
     );
 // ==================== Begin Module ======================
 
+    wire axi_aresetn;
+    (* KEEP = "TRUE" *) wire reset;
+    assign reset = !axi_aresetn;
+
 // your code here
 
 // ==================== Throbbers Etc ======================
@@ -62,7 +66,6 @@ module main (
 // ==================== AXI Memory Interface Stuff ======================
 
     wire axi_aclk;  // This net is the PS's FCLK_CLK0; 100MHz
-    wire [0:0] axi_aresetn;
     wire axi_interrupt1;
     wire [31:0] axi_slave1_araddr;
     wire [2:0] axi_slave1_arprot;
