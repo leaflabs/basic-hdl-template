@@ -70,7 +70,7 @@ include ./block_design.mk
 tbfiles += tb/rot13_tb.v
 #tbfiles += tb/zedboard_tb.v
 
-# Maintain a seperate list of sim-only testbench files
+### Maintain a seperate list of sim-only testbench files (optional)
 tb_verilog_files += hdl/rot13.v
 tb_vhdl_files :=
 
