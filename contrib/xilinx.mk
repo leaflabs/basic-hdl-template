@@ -323,7 +323,7 @@ test/%: tb/%.isim tb/simulate_isim.prj
 
 tests: $(alltests)
 
-isim: simulate
+isim:
 	@bash -c "$(sim_env); \
 		cd ../tb/; \
 		isimgui &"
