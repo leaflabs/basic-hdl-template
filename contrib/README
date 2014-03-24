@@ -1,5 +1,5 @@
 
-### Notes
+### Build System Help
 
 By default, re-synthesis of a project (eg, after making a change to any HDL
 files) will attempt to use the previous place-and-route netlist as a starting
