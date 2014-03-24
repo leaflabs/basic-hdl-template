@@ -150,8 +150,6 @@ NET "PS_CLK"         IOSTANDARD = LVCMOS33 | DRIVE = "8" | SLEW = "slow" | LOC =
 
 # ==== JX1/JX2 Header Connections (PARTIAL! WIP!) ====
 # [...] TODO:
-NET "header1[05]"   LOC = "T19"  | IOSTANDARD = LVCMOS33;
-# [...] TODO:
 NET "header1[09]"   LOC = "R19"  | IOSTANDARD = LVCMOS33;
 NET "header1[10]"   LOC = "T19"  | IOSTANDARD = LVCMOS33;
 NET "header1[11]"   LOC = "T11"  | IOSTANDARD = LVCMOS33;
@@ -173,7 +171,7 @@ NET "header1[26]"   LOC = "R14"  | IOSTANDARD = LVCMOS33;
 #    header1[27]    GND
 #    header1[28]    GND
 NET "header1[29]"   LOC = "Y16"  | IOSTANDARD = LVCMOS33;
-NET "header1[30]"   LOC = "000"  | IOSTANDARD = LVCMOS33;
+NET "header1[30]"   LOC = "W14"  | IOSTANDARD = LVCMOS33;
 NET "header1[31]"   LOC = "Y17"  | IOSTANDARD = LVCMOS33;
 NET "header1[32]"   LOC = "Y14"  | IOSTANDARD = LVCMOS33;
 #    header1[33]    GND
@@ -213,8 +211,6 @@ NET "header1[56]"   LOC = "W20"  | IOSTANDARD = LVCMOS33;
 
 
 # [...] TODO:
-NET "header2[10]"   LOC = "XXX"  | IOSTANDARD = LVCMOS33;
-NET "header2[11]"   LOC = "XXX"  | IOSTANDARD = LVCMOS33;
 #    header2[12]    VIN_HDR (???)
 NET "header2[13]"   LOC = "G14"  | IOSTANDARD = LVCMOS33;
 NET "header2[14]"   LOC = "J15"  | IOSTANDARD = LVCMOS33;
@@ -245,7 +241,7 @@ NET "header2[83]"   LOC = "N16"  | IOSTANDARD = LVCMOS33;
 NET "header2[84]"   LOC = "L15"  | IOSTANDARD = LVCMOS33;
 #    header2[85]    GND
 #    header2[86]    GND
-NET "header2[87]"   LOC = "M15"  | IOSTANDARD = LVCMOS33;
+NET "header2[87]"   LOC = "M14"  | IOSTANDARD = LVCMOS33;
 NET "header2[88]"   LOC = "K16"  | IOSTANDARD = LVCMOS33;
 NET "header2[89]"   LOC = "M15"  | IOSTANDARD = LVCMOS33;
 NET "header2[90]"   LOC = "J16"  | IOSTANDARD = LVCMOS33;
