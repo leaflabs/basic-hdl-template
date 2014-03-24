@@ -39,7 +39,6 @@ make par_fpga_editor  - launches FPGA visualizer GUI for last build (slow!)
 
 make coregen    - launches Xilinx Coregen tool
 make isim       - launches Xilinx simulator GUI (no testbench loaded)
-make ise        - launches new Xilinx IDE GUI (no project selected)
 make ise        - launches Xilinx IDE GUI (no project selected)
 make impact     - launches Xilinx JTAG program GUI (no bitfile)
 make ldimpact   - launches JTAG GUI with libusb libraries selected (Linux)
