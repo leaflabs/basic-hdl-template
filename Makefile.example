@@ -93,6 +93,9 @@ xilinx_cores +=
 ### Edit this line to specify a non-empty file for use with your project.
 bmm_file := contrib/empty.bmm
 
+### Extra project-specific arguments to linter
+#lint_extra := -Wno-ASSIGNDLY
+
 ### The bulk of the actual Xilinx-oriented build system is in a different file
 include ./contrib/xilinx.mk
 
