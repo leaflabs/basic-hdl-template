@@ -103,6 +103,10 @@ PWD := $(shell pwd)
 # The following are used to color-code console build output
 colorize ?= 2>&1 | python $(PWD)/contrib/colorize.py red ERROR: yellow WARNING: green \"Number of error messages: 0\" green \"Number of error messages:\t0\" green \"Number of errors:     0\"
 colorizetest ?= 2>&1 | python $(PWD)/contrib/colorize.py red FAIL green PASS
+colorizelint ?= 2>&1 | python $(PWD)/contrib/colorize.py red %Error yellow %Warning
+
+# Build up lint include path from all paths below ./hdl/
+lint_search += $(foreach d, $(shell /usr/bin/find ./hdl/ -type d), -I$(d))
 
 # Library stuff (TODO: untested)
 libs ?=
@@ -397,7 +401,10 @@ par_timingan: build/$(project)_post_par.twr
 		timingan -ucf ../$(ucf_file) $(project)_par.ncd $(project).pcf $(project)_post_par.twx &"
 
 lint:
-	verilator --lint-only -I./hdl -I./cores -Wall -Wno-DECLFILENAME hdl/$(top_module)_$(board) || true
+	@mkdir -p build
+	@echo "\`verilator_config" > build/verilator_opts.vlt
+	@echo 'lint_off -file "$(iseenv)/ISE/verilog/src/iSE/unisim_comp.v"' >> build/verilator_opts.vlt
+	verilator --lint-only -I./cores $(lint_search) -Wall -Wno-DECLFILENAME -v $(iseenv)/ISE/verilog/src/iSE/unisim_comp.v build/verilator_opts.vlt $(lint_extra) hdl/$(top_module)_$(board) $(colorizelint) || true
 
 help:
 	@cat ./contrib/README
