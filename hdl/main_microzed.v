@@ -8,9 +8,10 @@
  *
  */
 
-`timescale 1 ps / 1 ps
-
 module main (
+    // High-Density Headers (bottom of microzed)
+    inout wire [55:29] header1,
+    inout wire [31:14] header2,
 
     // Internal (PS-PL) DDR Interface
     inout wire [14:0] DDR_Addr,
@@ -39,9 +40,19 @@ module main (
     );
 // ==================== Begin Module ======================
 
-    wire axi_aresetn;
-    (* KEEP = "TRUE" *) wire reset;
-    assign reset = !axi_aresetn;
+//// Optional Static Compile-time Parameters
+parameter GIT_COMMIT = 32'd0;
+parameter BUILD_UNIX_TIME = 64'd0;
+
+// Clock nets and resets
+// "keep" attribute tells Xilinx not to rename/collapse this net
+// This net is the PS's FCLK_CLK0; 50MHz.
+// Usually already BUFG (global clock net)
+(* KEEP="TRUE" *) wire axi_aclk;
+(* KEEP="TRUE" *) wire reset;
+wire axi_aresetn;
+wire axi_interrupt1;
+assign reset = ~axi_aresetn;
 
 // your code here
 
@@ -65,8 +76,6 @@ module main (
 
 // ==================== AXI Memory Interface Stuff ======================
 
-    wire axi_aclk;  // This net is the PS's FCLK_CLK0; 100MHz
-    wire axi_interrupt1;
     wire [31:0] axi_slave1_araddr;
     wire [2:0] axi_slave1_arprot;
     wire [0:0] axi_slave1_arready;
@@ -87,8 +96,8 @@ module main (
     wire [3:0] axi_slave1_wstrb;
     wire [0:0] axi_slave1_wvalid;
 
-block_design block_design_i
-       (.DDR_addr(DDR_Addr),
+    block_design block_design_i (
+        .DDR_addr(DDR_Addr),
         .DDR_ba(DDR_BankAddr),
         .DDR_cas_n(DDR_CAS_n),
         .DDR_ck_n(DDR_Clk_n),
@@ -132,9 +141,13 @@ block_design block_design_i
         .axi_slave1_wdata(axi_slave1_wdata),
         .axi_slave1_wready(axi_slave1_wready),
         .axi_slave1_wstrb(axi_slave1_wstrb),
-        .axi_slave1_wvalid(axi_slave1_wvalid));
+        .axi_slave1_wvalid(axi_slave1_wvalid)
+        );
 
-axi_lite_slave axi_lite_slave_i (
+	axi_lite_slave #(
+        .GIT_COMMIT_HASH(GIT_COMMIT),
+        .UNIX_TIMESTAMP(BUILD_UNIX_TIME)
+	) axi_lite_slave_i (
         .interrupt_request(axi_interrupt1),
         .S_AXI_ACLK(axi_aclk),
         .S_AXI_ARESETN(axi_aresetn),

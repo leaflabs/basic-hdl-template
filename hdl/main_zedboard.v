@@ -8,8 +8,6 @@
  *
  */
 
-`timescale 1 ps / 1 ps
-
 module main (
     input wire clock_100mhz,
 
@@ -21,6 +19,8 @@ module main (
     input wire button_left,
     input wire button_right,
     input wire button_up,
+
+    inout wire [10:1] pmod_a,
 
     // Internal (PS-PL) DDR Interface
     inout wire [15:0] DDR_Addr,
@@ -48,6 +48,20 @@ module main (
     inout wire PS_CLK
     );
 // ==================== Begin Module ======================
+
+//// Optional Static Compile-time Parameters
+parameter GIT_COMMIT = 32'd0;
+parameter BUILD_UNIX_TIME = 64'd0;
+
+// Clock nets and resets
+// "keep" attribute tells Xilinx not to rename/collapse this net
+// This net is the PS's FCLK_CLK0; 100MHz
+// Usually already BUFG (global clock net)
+(* KEEP="TRUE" *) wire axi_aclk;
+(* KEEP="TRUE" *) wire reset;
+wire axi_aresetn;
+wire axi_interrupt1;
+assign reset = ~axi_aresetn;
 
 // your code here
 
@@ -86,12 +100,8 @@ module main (
     assign leds[7] = throb_led_100mhz;
 
 
-
 // ==================== AXI Memory Interface Stuff ======================
 
-    wire axi_aclk;  // This net is the PS's FCLK_CLK0; 100MHz
-    wire [0:0] axi_aresetn;
-    wire axi_interrupt1;
     wire [31:0] axi_slave1_araddr;
     wire [2:0] axi_slave1_arprot;
     wire [0:0] axi_slave1_arready;
@@ -112,8 +122,8 @@ module main (
     wire [3:0] axi_slave1_wstrb;
     wire [0:0] axi_slave1_wvalid;
 
-block_design block_design_i
-       (.DDR_addr(DDR_Addr),
+    block_design block_design_i (
+        .DDR_addr(DDR_Addr),
         .DDR_ba(DDR_BankAddr),
         .DDR_cas_n(DDR_CAS_n),
         .DDR_ck_n(DDR_Clk_n),
@@ -161,9 +171,13 @@ block_design block_design_i
         .axi_slave1_wdata(axi_slave1_wdata),
         .axi_slave1_wready(axi_slave1_wready),
         .axi_slave1_wstrb(axi_slave1_wstrb),
-        .axi_slave1_wvalid(axi_slave1_wvalid));
+        .axi_slave1_wvalid(axi_slave1_wvalid)
+        );
 
-axi_lite_slave axi_lite_slave_i (
+	axi_lite_slave #(
+        .GIT_COMMIT_HASH(GIT_COMMIT),
+        .UNIX_TIMESTAMP(BUILD_UNIX_TIME)
+	) axi_lite_slave_i (
         .interrupt_request(axi_interrupt1),
         .S_AXI_ACLK(axi_aclk),
         .S_AXI_ARESETN(axi_aresetn),
