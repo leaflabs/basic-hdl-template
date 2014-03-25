@@ -96,9 +96,9 @@ bmm_file := contrib/empty.bmm
 ### Extra project-specific arguments to linter
 #lint_extra := -Wno-ASSIGNDLY
 
-### The bulk of the actual Xilinx-oriented build system is in a different file
-include ./contrib/xilinx.mk
-
 ### Include any last extra board- or project-specific build targets
 include $(extra_includes)
+
+### The bulk of the actual Xilinx-oriented build system is in a different file
+include ./contrib/xilinx.mk
 
