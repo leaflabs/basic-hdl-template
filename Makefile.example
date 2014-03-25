@@ -94,7 +94,7 @@ xilinx_cores +=
 bmm_file := contrib/empty.bmm
 
 ### Extra project-specific arguments to linter
-#lint_extra := -Wno-ASSIGNDLY
+#lint_extra += -Wno-ASSIGNDLY
 
 ### The bulk of the actual Xilinx-oriented build system is in a different file
 include ./contrib/xilinx.mk

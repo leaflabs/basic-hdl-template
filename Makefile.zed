@@ -107,6 +107,9 @@ xilinx_cores +=
 ### Edit this line to specify a non-empty file for use with your project.
 bmm_file := contrib/empty.bmm
 
+### Extra project-specific arguments to linter
+#lint_extra += -Wno-ASSIGNDLY
+
 ### Include any last extra board- or project-specific build targets
 include $(extra_includes)
 
