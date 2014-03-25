@@ -20,27 +20,27 @@ module rot13 (
     output reg [7:0] out_char = 8'd0
     );
 
-    always @(posedge clock) begin
-        if (reset) begin
-            out_char <= 8'd0;
+always @(posedge clock) begin
+    if (reset) begin
+        out_char <= 8'd0;
+    end else begin
+        if (in_char >= 8'd97 && in_char < 8'd110) begin
+            // 'a' through 'm'
+            out_char <= in_char + 8'd13;
+        end else if (in_char >= 8'd110 && in_char < 8'd123) begin
+            // 'n' through 'z'
+            out_char <= in_char - 8'd13;
+        end else if (in_char >= 8'd65 && in_char < 8'd78) begin
+            // 'A' through 'M'
+            out_char <= in_char + 8'd13;
+        end else if (in_char >= 8'd78 && in_char < 8'd91) begin
+            // 'N' through 'Z'
+            out_char <= in_char - 8'd13;
         end else begin
-            if (in_char >= 8'd97 && in_char < 8'd110) begin
-                // 'a' through 'm'
-                out_char <= in_char + 8'd13;
-            end else if (in_char >= 8'd110 && in_char < 8'd123) begin
-                // 'n' through 'z'
-                out_char <= in_char - 8'd13;
-            end else if (in_char >= 8'd65 && in_char < 8'd78) begin
-                // 'A' through 'M'
-                out_char <= in_char + 8'd13;
-            end else if (in_char >= 8'd78 && in_char < 8'd91) begin
-                // 'N' through 'Z'
-                out_char <= in_char - 8'd13;
-            end else begin
-                // all other characters
-                out_char <= in_char;
-            end
+            // all other characters
+            out_char <= in_char;
         end
     end
+end
 
 endmodule

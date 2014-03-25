@@ -36,59 +36,59 @@ module main (
 
     );  // don't forget to remove trailing comma!
 
-    wire reset;
-    assign reset = reset_button;
-    wire clock_25mhz;
-    assign clock_25mhz = user_clock;
+wire reset;
+assign reset = reset_button;
+wire clock_25mhz;
+assign clock_25mhz = user_clock;
 
-    reg [23:0] throb_counter = 0;
-    reg throb_led = 0;
-    assign gpio_led[0] = throb_led;
+reg [23:0] throb_counter = 0;
+reg throb_led = 0;
+assign gpio_led[0] = throb_led;
 
-    wire [7:0] rx_byte;
-    wire [7:0] tx_byte;
-    wire uart_flag;
-    assign gpio_led[1] = uart_flag;
-    simple_uart #(
-        .CLOCK_DIVIDE(651) // for (non-standard) 25MHz clock 
-    ) simple_uart_inst (
-        .clk(clock_25mhz),
-        .rst(reset),
-        .rx(uart_rx),
-        .tx(uart_tx),
-        .transmit(uart_flag),
-        .tx_byte(tx_byte),
-        .received(uart_flag),
-        .rx_byte(rx_byte),
-        .is_receiving(),
-        .is_transmitting(),
-        .recv_error()
-    );
+wire [7:0] rx_byte;
+wire [7:0] tx_byte;
+wire uart_flag;
+assign gpio_led[1] = uart_flag;
+simple_uart #(
+    .CLOCK_DIVIDE(651) // for (non-standard) 25MHz clock 
+) simple_uart_inst (
+    .clk(clock_25mhz),
+    .rst(reset),
+    .rx(uart_rx),
+    .tx(uart_tx),
+    .transmit(uart_flag),
+    .tx_byte(tx_byte),
+    .received(uart_flag),
+    .rx_byte(rx_byte),
+    .is_receiving(),
+    .is_transmitting(),
+    .recv_error()
+);
 
-    rot13 rot13_inst (
-        .clock(clock_25mhz),
-        .reset(reset),
-        .in_char(rx_byte),
-        .out_char(tx_byte)
-    );
+rot13 rot13_inst (
+    .clock(clock_25mhz),
+    .reset(reset),
+    .in_char(rx_byte),
+    .out_char(tx_byte)
+);
 
-    always @(posedge clock_25mhz) begin
-        if (reset) begin
-            throb_counter <= 0;
-            throb_led <= 0;
+always @(posedge clock_25mhz) begin
+    if (reset) begin
+        throb_counter <= 0;
+        throb_led <= 0;
+    end else begin
+        if (throb_counter >= 24'd12_500_000) begin
+            throb_led <= !throb_led;
+            throb_counter <= 24'd0;
         end else begin
-            if (throb_counter >= 24'd12_500_000) begin
-                throb_led <= !throb_led;
-                throb_counter <= 24'd0;
-            end else begin
-                throb_counter <= throb_counter + 24'd1;
-            end
+            throb_counter <= throb_counter + 24'd1;
         end
     end
+end
 
-    // Tie off extra signals
-    assign gpio_led[3:2] = 0;
-    assign gpio_header = gpio_switch;
+// Tie off extra signals
+assign gpio_led[3:2] = 0;
+assign gpio_header = gpio_switch;
 
 endmodule
 

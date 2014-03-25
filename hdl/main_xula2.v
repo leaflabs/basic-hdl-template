@@ -25,63 +25,63 @@ module main (
     output wire flash_miso
     );
 
-    wire reset = chan[0];
-    wire uart_rx = chan[17];
-    wire uart_tx = chan[18];
+wire reset = chan[0];
+wire uart_rx = chan[17];
+wire uart_tx = chan[18];
 
-    reg [22:0] throb_counter = 0;
-    reg throb_led = 0;
-    assign chan[10] = throb_led;
+reg [22:0] throb_counter = 0;
+reg throb_led = 0;
+assign chan[10] = throb_led;
 
-    wire [7:0] rx_byte;
-    wire [7:0] tx_byte;
-    wire uart_flag;
-    simple_uart #(
-        .CLOCK_DIVIDE(313) // for 12MHz clock
-    ) simple_uart_inst (
-        .clk(clock_12mhz),
-        .rst(reset),
-        .rx(chan[17]),
-        .tx(chan[18]),
-        .transmit(uart_flag),
-        .tx_byte(tx_byte),
-        .received(uart_flag),
-        .rx_byte(rx_byte),
-        .is_receiving(),
-        .is_transmitting(),
-        .recv_error()
-        );
+wire [7:0] rx_byte;
+wire [7:0] tx_byte;
+wire uart_flag;
+simple_uart #(
+    .CLOCK_DIVIDE(313) // for 12MHz clock
+) simple_uart_inst (
+    .clk(clock_12mhz),
+    .rst(reset),
+    .rx(chan[17]),
+    .tx(chan[18]),
+    .transmit(uart_flag),
+    .tx_byte(tx_byte),
+    .received(uart_flag),
+    .rx_byte(rx_byte),
+    .is_receiving(),
+    .is_transmitting(),
+    .recv_error()
+    );
 
-    rot13 rot13_inst (
-        .clock(clock_12mhz),
-        .reset(reset),
-        .in_char(rx_byte),
-        .out_char(tx_byte)
-        );
+rot13 rot13_inst (
+    .clock(clock_12mhz),
+    .reset(reset),
+    .in_char(rx_byte),
+    .out_char(tx_byte)
+    );
 
-    always @(posedge clock_12mhz) begin
-        if (reset) begin
-            throb_counter <= 0;
-            throb_led <= 0;
+always @(posedge clock_12mhz) begin
+    if (reset) begin
+        throb_counter <= 0;
+        throb_led <= 0;
+    end else begin
+        if (throb_counter >= 23'd06_000_000) begin
+            throb_led <= !throb_led;
+            throb_counter <= 23'd0;
         end else begin
-            if (throb_counter >= 23'd06_000_000) begin
-                throb_led <= !throb_led;
-                throb_counter <= 23'd0;
-            end else begin
-                throb_counter <= throb_counter + 23'd1;
-            end
+            throb_counter <= throb_counter + 23'd1;
         end
     end
+end
 
-    // Tie off unused outputs
-    assign microsd_cs = 1'bZ;
-    assign flash_cs = 1'bZ;
-    assign flash_sclk = 1'bZ;
-    assign flash_mosi = 1'bZ;
-    assign flash_miso = 1'bZ;
+// Tie off unused outputs
+assign microsd_cs = 1'bZ;
+assign flash_cs = 1'bZ;
+assign flash_sclk = 1'bZ;
+assign flash_mosi = 1'bZ;
+assign flash_miso = 1'bZ;
 
-    // Squelch unused input warnings
-    (* KEEP="TRUE" *) wire dummy;
-    assign dummy =& {chan[31:0], chan_clk};
+// Squelch unused input warnings
+(* KEEP="TRUE" *) wire dummy;
+assign dummy =& {chan[31:0], chan_clk};
 
 endmodule
