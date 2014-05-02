@@ -40,7 +40,7 @@ FPGAs.
   contrib/
     Project-independent build scripts are set here
 
-  backup/
+  bitfiles/
     A handful of old "known-good" bitfiles might get archived here.
 
   Makefile
