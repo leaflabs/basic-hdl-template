@@ -14,3 +14,10 @@ autoimpact (needs testing)
 Add linting to tests (aka, tb/*_tb.v)
 
 'lint' should use vfiles, not -I./hdl
+
+add 'S' to the end of netlists ("save") to squelch lots of warnings?
+
+refactor:
+  - everything as a /shared/ directory; could be usable as a git submodule or
+    just pulling everything in
+  - ./sim/ instead of ./tb/
