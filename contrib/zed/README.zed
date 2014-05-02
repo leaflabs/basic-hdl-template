@@ -56,3 +56,12 @@ The ".bit.bin" files are distinct from both .bit files and .bin files. See
 this Xilinx support solution for details:
 
   http://www.xilinx.com/support/answers/46913.html
+
+### Misc
+
+Devicetree syntax:
+http://billauer.co.il/blog/2012/08/irq-zynq-dts-cortex-a9/
+
+Interrupt types:
+https://en.wikipedia.org/wiki/Interrupt#Types_of_Interrupts
+

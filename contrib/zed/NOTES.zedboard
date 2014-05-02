@@ -1,0 +1,73 @@
+
+using v14.6 xilinx kernel
+
+Naive u-boot said:
+
+        Aug 19 2011 - 07:31:52
+        5
+        OutputStatus = 0x8300
+
+used 14.6 boot.bin
+
+renamed .dtb to devicetree.dtb
+
+u-boot complained said at various points:
+
+    # Wrong Ramdisk Image Format
+
+"The initial ramdisk is now a initramfs created with buildroot"
+
+rootfs.ext2.gz.uboot was the correct file to use (renamed to uramdisk.image.gz)
+
+"ERROR: Did not find a cmdline Flattened Device Tree"
+
+oh, probably need to re-juggle memory locations. :(
+
+## Booting kernel from Legacy Image at 03000000 ...
+   Image Name:   Linux-3.9.0-xilinx
+   Image Type:   ARM Linux Kernel Image (uncompressed)
+   Data Size:    2982912 Bytes = 2.8 MiB
+   Load Address: 00108000
+   Entry Point:  00108000
+   Verifying Checksum ... OK
+## Loading init Ramdisk from Legacy Image at 02000000 ...
+   Image Name:   linux ramdisk
+   Image Type:   ARM Linux RAMDisk Image (gzip compressed)
+   Data Size:    10677981 Bytes = 10.2 MiB
+   Load Address: 02000000
+   Entry Point:  02000000
+   Verifying Checksum ... OK
+
+the above was due to too-big ramdisk.
+
+confirmed by tried manually switching devicetree address to 0x2B00000; kernel
+booted, failed in clock events stuff.
+
+manually removed python2.7 from the image.
+
+---
+
+got way further! but then:
+    RAMDISK: incomplete write (30422 != 32768)
+    write error
+    VFS: Mounted root (ext2 filesystem) on device 1:0.
+    devtmpfs: mounted
+    Freeing init memory: 168K
+    attempt to access beyond end of device
+    ram0: rw=0, want=36432, limit=32768
+    attempt to access beyond end of device
+    ram0: rw=0, want=36432, limit=32768
+
+still too fat? uramdisk was ~7-8MB. need to slim!
+
+manually removed the other libpython, now 5.1MB
+
+worked!
+
+... except that fucking codesourcery 2013.4 bug with glibc, so busybox's ash
+has no globbing and /etc/init.d/rcS is a no-op.
+
+mostly works good, except that RAMFS isn't big enough. :(
+
+writing to /mnt works though.
+
